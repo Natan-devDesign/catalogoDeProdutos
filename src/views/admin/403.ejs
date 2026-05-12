@@ -1,0 +1,19 @@
+<%
+pageTitle   = 'Acesso Negado';
+currentPage = '';
+breadcrumb  = '// 403';
+%>
+<%- include('../layouts/dashboard', { body: `
+<div style="text-align:center;padding:5rem 2rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem">
+  <div style="font-family:'Bebas Neue',sans-serif;font-size:6rem;letter-spacing:.06em;color:var(--blue-mid);line-height:1">403</div>
+  <div style="font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.28em;color:var(--text-muted)">// ACESSO RESTRITO</div>
+  <p style="font-size:.95rem;color:var(--text-muted);max-width:400px;line-height:1.7;letter-spacing:.04em">
+    Você não tem permissão para acessar esta página.<br/>
+    Apenas administradores podem realizar esta ação.
+  </p>
+  <div style="display:flex;gap:.75rem;margin-top:.5rem">
+    <a href="/admin" class="btn btn-primary">← Voltar ao Dashboard</a>
+    <a href="javascript:history.back()" class="btn btn-outline">Página Anterior</a>
+  </div>
+</div>
+` }) %>

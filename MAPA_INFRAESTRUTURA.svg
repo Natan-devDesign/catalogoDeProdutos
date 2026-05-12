@@ -1,0 +1,235 @@
+<svg width="100%" viewBox="0 0 680 1580" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>Mapa de Infraestrutura — BRIWAX</title>
+  <desc>Fluxograma completo da infraestrutura: Browser, Rotas, Middlewares, Controllers, Models, PostgreSQL, Views EJS e fluxos de acesso público e admin.</desc>
+  <style>
+    text { font-family: Arial, Helvetica, sans-serif; fill: #1a1a2e; }
+    .th  { font-size: 14px; font-weight: 700; }
+    .ts  { font-size: 12px; font-weight: 400; fill: #444; }
+    .lbl { font-size: 11px; font-weight: 600; fill: #222; }
+    /* Cores */
+    .bg-gray   { fill: #f4f3ef; stroke: #888; }
+    .bg-blue   { fill: #e6f1fb; stroke: #185fa5; }
+    .bg-purple { fill: #eeedfe; stroke: #534ab7; }
+    .bg-teal   { fill: #e1f5ee; stroke: #0f6e56; }
+    .bg-amber  { fill: #faeeda; stroke: #854f0b; }
+    .bg-coral  { fill: #faece7; stroke: #993c1d; }
+    line, path { stroke: #666; }
+    .arr { stroke: #555; fill: none; }
+    .leader { stroke: #aaa; stroke-dasharray: 4 3; fill: none; }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#555" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <!-- BROWSER -->
+  <rect x="190" y="20" width="300" height="44" rx="8" class="bg-gray" stroke-width="0.5"/>
+  <text class="th" x="340" y="38" text-anchor="middle" dominant-baseline="central">Browser / Cliente</text>
+  <text class="ts" x="340" y="56" text-anchor="middle" dominant-baseline="central">HTTP · Cookies JWT · AJAX fetch</text>
+  <line x1="340" y1="64" x2="340" y2="88" class="arr" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- ENTRY POINT -->
+  <rect x="220" y="90" width="240" height="44" rx="8" class="bg-purple" stroke-width="0.5"/>
+  <text class="th" x="340" y="108" text-anchor="middle" dominant-baseline="central">server.js + app.js</text>
+  <text class="ts" x="340" y="125" text-anchor="middle" dominant-baseline="central">Express · Helmet · Rate limit · EJS</text>
+  <line x1="340" y1="134" x2="340" y2="158" class="arr" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- ROTAS -->
+  <rect x="30"  y="160" width="158" height="50" rx="8" class="bg-blue" stroke-width="0.5"/>
+  <text class="th" x="109" y="179" text-anchor="middle" dominant-baseline="central">public.routes.js</text>
+  <text class="ts" x="109" y="197" text-anchor="middle" dominant-baseline="central">/ · /catalogo · /produto</text>
+  <rect x="241" y="160" width="198" height="50" rx="8" class="bg-blue" stroke-width="0.5"/>
+  <text class="th" x="340" y="179" text-anchor="middle" dominant-baseline="central">auth.routes.js</text>
+  <text class="ts" x="340" y="197" text-anchor="middle" dominant-baseline="central">/auth/login · /auth/logout</text>
+  <rect x="492" y="160" width="158" height="50" rx="8" class="bg-blue" stroke-width="0.5"/>
+  <text class="th" x="571" y="179" text-anchor="middle" dominant-baseline="central">admin.routes.js</text>
+  <text class="ts" x="571" y="197" text-anchor="middle" dominant-baseline="central">/admin/* protegidas JWT</text>
+  <line x1="571" y1="210" x2="571" y2="234" class="arr" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- MIDDLEWARES -->
+  <rect x="30"  y="236" width="190" height="50" rx="8" class="bg-amber" stroke-width="0.5"/>
+  <text class="th" x="125" y="255" text-anchor="middle" dominant-baseline="central">upload.middleware.js</text>
+  <text class="ts" x="125" y="273" text-anchor="middle" dominant-baseline="central">Multer · imagens produto</text>
+  <rect x="232" y="236" width="178" height="50" rx="8" class="bg-amber" stroke-width="0.5"/>
+  <text class="th" x="321" y="255" text-anchor="middle" dominant-baseline="central">error.middleware.js</text>
+  <text class="ts" x="321" y="273" text-anchor="middle" dominant-baseline="central">Handler global 404 / 500</text>
+  <rect x="420" y="236" width="302" height="50" rx="8" class="bg-amber" stroke-width="0.5"/>
+  <text class="th" x="571" y="255" text-anchor="middle" dominant-baseline="central">auth.middleware.js</text>
+  <text class="ts" x="571" y="273" text-anchor="middle" dominant-baseline="central">requireAuth · requireAdmin · JWT verify</text>
+
+  <!-- setas rotas -> controllers -->
+  <line x1="109" y1="210" x2="109" y2="308" class="arr" stroke-width="1" marker-end="url(#arrow)"/>
+  <line x1="340" y1="210" x2="252" y2="308" class="arr" stroke-width="1" marker-end="url(#arrow)"/>
+  <line x1="571" y1="286" x2="478" y2="308" class="arr" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- CONTROLLERS row 1 -->
+  <text class="lbl" x="340" y="304" text-anchor="middle">Controllers</text>
+  <rect x="30"  y="310" width="146" height="50" rx="8" class="bg-teal" stroke-width="0.5"/>
+  <text class="th" x="103" y="329" text-anchor="middle" dominant-baseline="central">catalog.controller</text>
+  <text class="ts" x="103" y="347" text-anchor="middle" dominant-baseline="central">showCatalog · apiSearch</text>
+  <rect x="188" y="310" width="146" height="50" rx="8" class="bg-teal" stroke-width="0.5"/>
+  <text class="th" x="261" y="329" text-anchor="middle" dominant-baseline="central">home.controller</text>
+  <text class="ts" x="261" y="347" text-anchor="middle" dominant-baseline="central">showHome · editor · reorder</text>
+  <rect x="346" y="310" width="146" height="50" rx="8" class="bg-teal" stroke-width="0.5"/>
+  <text class="th" x="419" y="329" text-anchor="middle" dominant-baseline="central">product.controller</text>
+  <text class="ts" x="419" y="347" text-anchor="middle" dominant-baseline="central">list · create · update · remove</text>
+  <rect x="504" y="310" width="146" height="50" rx="8" class="bg-teal" stroke-width="0.5"/>
+  <text class="th" x="577" y="329" text-anchor="middle" dominant-baseline="central">auth.controller</text>
+  <text class="ts" x="577" y="347" text-anchor="middle" dominant-baseline="central">showLogin · doLogin · logout</text>
+
+  <!-- CONTROLLERS row 2 -->
+  <rect x="30"  y="374" width="146" height="50" rx="8" class="bg-teal" stroke-width="0.5"/>
+  <text class="th" x="103" y="393" text-anchor="middle" dominant-baseline="central">dashboard.controller</text>
+  <text class="ts" x="103" y="411" text-anchor="middle" dominant-baseline="central">index · listUsers · createUser</text>
+  <rect x="188" y="374" width="146" height="50" rx="8" class="bg-teal" stroke-width="0.5"/>
+  <text class="th" x="261" y="393" text-anchor="middle" dominant-baseline="central">marketing.controller</text>
+  <text class="ts" x="261" y="411" text-anchor="middle" dominant-baseline="central">showConfig · updateConfig</text>
+  <rect x="346" y="374" width="146" height="50" rx="8" class="bg-teal" stroke-width="0.5"/>
+  <text class="th" x="419" y="393" text-anchor="middle" dominant-baseline="central">account.controller</text>
+  <text class="ts" x="419" y="411" text-anchor="middle" dominant-baseline="central">showAccount · changePassword</text>
+  <line x1="340" y1="424" x2="340" y2="454" class="arr" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- MODELS -->
+  <text class="lbl" x="340" y="450" text-anchor="middle">Models</text>
+  <rect x="240" y="456" width="200" height="36" rx="8" class="bg-purple" stroke-width="0.5"/>
+  <text class="th" x="340" y="474" text-anchor="middle" dominant-baseline="central">models/index.js (barrel)</text>
+  <line x1="340" y1="492" x2="340" y2="510" class="arr" stroke-width="0.8" marker-end="url(#arrow)"/>
+
+  <!-- models row 1 -->
+  <rect x="30"  y="512" width="104" height="44" rx="8" class="bg-purple" stroke-width="0.5"/>
+  <text class="th" x="82"  y="530" text-anchor="middle" dominant-baseline="central">Product.model</text>
+  <text class="ts" x="82"  y="547" text-anchor="middle" dominant-baseline="central">search · CRUD · images</text>
+  <rect x="146" y="512" width="104" height="44" rx="8" class="bg-purple" stroke-width="0.5"/>
+  <text class="th" x="198" y="530" text-anchor="middle" dominant-baseline="central">User.model</text>
+  <text class="ts" x="198" y="547" text-anchor="middle" dominant-baseline="central">findByEmail · update</text>
+  <rect x="262" y="512" width="104" height="44" rx="8" class="bg-purple" stroke-width="0.5"/>
+  <text class="th" x="314" y="530" text-anchor="middle" dominant-baseline="central">Category.model</text>
+  <text class="ts" x="314" y="547" text-anchor="middle" dominant-baseline="central">findAll · findBySlug</text>
+  <rect x="378" y="512" width="104" height="44" rx="8" class="bg-purple" stroke-width="0.5"/>
+  <text class="th" x="430" y="530" text-anchor="middle" dominant-baseline="central">HomeSection.model</text>
+  <text class="ts" x="430" y="547" text-anchor="middle" dominant-baseline="central">findAll · update</text>
+  <rect x="494" y="512" width="104" height="44" rx="8" class="bg-purple" stroke-width="0.5"/>
+  <text class="th" x="546" y="530" text-anchor="middle" dominant-baseline="central">HomeFeatured.model</text>
+  <text class="ts" x="546" y="547" text-anchor="middle" dominant-baseline="central">findAll · setFeatured</text>
+
+  <!-- models row 2 -->
+  <rect x="30"  y="568" width="104" height="44" rx="8" class="bg-purple" stroke-width="0.5"/>
+  <text class="th" x="82"  y="586" text-anchor="middle" dominant-baseline="central">Marketing.model</text>
+  <text class="ts" x="82"  y="603" text-anchor="middle" dominant-baseline="central">findActive · upsert</text>
+  <rect x="146" y="568" width="104" height="44" rx="8" class="bg-purple" stroke-width="0.5"/>
+  <text class="th" x="198" y="586" text-anchor="middle" dominant-baseline="central">AuditLog.model</text>
+  <text class="ts" x="198" y="603" text-anchor="middle" dominant-baseline="central">log · recent</text>
+  <line x1="340" y1="612" x2="340" y2="646" class="arr" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- POSTGRESQL -->
+  <text class="lbl" x="340" y="642" text-anchor="middle">PostgreSQL — Banco de Dados</text>
+  <rect x="30" y="648" width="620" height="114" rx="12" class="bg-blue" stroke-width="0.5"/>
+  <text class="th" x="340" y="668" text-anchor="middle" dominant-baseline="central">database/schema.sql</text>
+  <rect x="46"  y="676" width="94"  height="28" rx="5" class="bg-blue" stroke-width="0.5"/>
+  <text class="ts" x="93"  y="690" text-anchor="middle" dominant-baseline="central">users</text>
+  <rect x="150" y="676" width="94"  height="28" rx="5" class="bg-blue" stroke-width="0.5"/>
+  <text class="ts" x="197" y="690" text-anchor="middle" dominant-baseline="central">products</text>
+  <rect x="254" y="676" width="104" height="28" rx="5" class="bg-blue" stroke-width="0.5"/>
+  <text class="ts" x="306" y="690" text-anchor="middle" dominant-baseline="central">categories</text>
+  <rect x="368" y="676" width="110" height="28" rx="5" class="bg-blue" stroke-width="0.5"/>
+  <text class="ts" x="423" y="690" text-anchor="middle" dominant-baseline="central">home_sections</text>
+  <rect x="488" y="676" width="146" height="28" rx="5" class="bg-blue" stroke-width="0.5"/>
+  <text class="ts" x="561" y="690" text-anchor="middle" dominant-baseline="central">marketing_configs</text>
+  <rect x="46"  y="714" width="128" height="28" rx="5" class="bg-blue" stroke-width="0.5"/>
+  <text class="ts" x="110" y="728" text-anchor="middle" dominant-baseline="central">product_images</text>
+  <rect x="184" y="714" width="146" height="28" rx="5" class="bg-blue" stroke-width="0.5"/>
+  <text class="ts" x="257" y="728" text-anchor="middle" dominant-baseline="central">product_downloads</text>
+  <rect x="340" y="714" width="168" height="28" rx="5" class="bg-blue" stroke-width="0.5"/>
+  <text class="ts" x="424" y="728" text-anchor="middle" dominant-baseline="central">home_featured_products</text>
+  <rect x="518" y="714" width="116" height="28" rx="5" class="bg-blue" stroke-width="0.5"/>
+  <text class="ts" x="576" y="728" text-anchor="middle" dominant-baseline="central">audit_log</text>
+
+  <!-- linha tracejada controllers -> views -->
+  <line x1="340" y1="360" x2="340" y2="800" stroke="#aaa" stroke-width="0.5" stroke-dasharray="5 4" marker-end="url(#arrow)"/>
+
+  <!-- VIEWS -->
+  <text class="lbl" x="340" y="800" text-anchor="middle">Views EJS — Camada de Apresentação</text>
+  <rect x="30"  y="808" width="146" height="50" rx="8" class="bg-coral" stroke-width="0.5"/>
+  <text class="th" x="103" y="827" text-anchor="middle" dominant-baseline="central">layouts/</text>
+  <text class="ts" x="103" y="845" text-anchor="middle" dominant-baseline="central">dashboard.ejs</text>
+  <rect x="188" y="808" width="146" height="50" rx="8" class="bg-coral" stroke-width="0.5"/>
+  <text class="th" x="261" y="827" text-anchor="middle" dominant-baseline="central">auth/</text>
+  <text class="ts" x="261" y="845" text-anchor="middle" dominant-baseline="central">login.ejs</text>
+  <rect x="346" y="808" width="146" height="50" rx="8" class="bg-coral" stroke-width="0.5"/>
+  <text class="th" x="419" y="827" text-anchor="middle" dominant-baseline="central">public/</text>
+  <text class="ts" x="419" y="845" text-anchor="middle" dominant-baseline="central">home · catalog · product · 404</text>
+  <rect x="504" y="808" width="146" height="50" rx="8" class="bg-coral" stroke-width="0.5"/>
+  <text class="th" x="577" y="827" text-anchor="middle" dominant-baseline="central">admin/</text>
+  <text class="ts" x="577" y="845" text-anchor="middle" dominant-baseline="central">dashboard · editor · products</text>
+  <rect x="30" y="872" width="620" height="44" rx="8" class="bg-coral" stroke-width="0.5"/>
+  <text class="th" x="340" y="890" text-anchor="middle" dominant-baseline="central">admin/ — todas as views</text>
+  <text class="ts" x="340" y="907" text-anchor="middle" dominant-baseline="central">home-editor · marketing · users · account · products/index · products/create · 403</text>
+  <rect x="30" y="930" width="620" height="44" rx="8" class="bg-gray" stroke-width="0.5"/>
+  <text class="th" x="340" y="948" text-anchor="middle" dominant-baseline="central">public/ — Arquivos Estáticos</text>
+  <text class="ts" x="340" y="966" text-anchor="middle" dominant-baseline="central">catalog-filters.js (AJAX) · uploads/products/ (Multer)</text>
+
+  <!-- SEPARADOR -->
+  <line x1="30" y1="1000" x2="650" y2="1000" stroke="#bbb" stroke-width="0.5" stroke-dasharray="6 4"/>
+  <text class="lbl" x="340" y="1016" text-anchor="middle">Fluxos de Acesso — Público vs Admin</text>
+
+  <!-- FLUXO PUBLICO -->
+  <text class="lbl" x="155" y="1042" text-anchor="middle">Fluxo Público</text>
+  <rect x="30" y="1048" width="250" height="36" rx="8" class="bg-gray" stroke-width="0.5"/>
+  <text class="th" x="155" y="1066" text-anchor="middle" dominant-baseline="central">GET /</text>
+  <line x1="155" y1="1084" x2="155" y2="1104" class="arr" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="30" y="1106" width="250" height="36" rx="8" class="bg-blue" stroke-width="0.5"/>
+  <text class="th" x="155" y="1124" text-anchor="middle" dominant-baseline="central">public.routes.js</text>
+  <line x1="155" y1="1142" x2="155" y2="1162" class="arr" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="30" y="1164" width="250" height="36" rx="8" class="bg-teal" stroke-width="0.5"/>
+  <text class="th" x="155" y="1182" text-anchor="middle" dominant-baseline="central">home.controller.showHome</text>
+  <line x1="155" y1="1200" x2="155" y2="1220" class="arr" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="30" y="1222" width="250" height="36" rx="8" class="bg-purple" stroke-width="0.5"/>
+  <text class="th" x="155" y="1240" text-anchor="middle" dominant-baseline="central">HomeSectionModel · Marketing</text>
+  <line x1="155" y1="1258" x2="155" y2="1278" class="arr" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="30" y="1280" width="250" height="36" rx="8" class="bg-coral" stroke-width="0.5"/>
+  <text class="th" x="155" y="1298" text-anchor="middle" dominant-baseline="central">render: public/home.ejs</text>
+
+  <!-- FLUXO ADMIN -->
+  <text class="lbl" x="510" y="1042" text-anchor="middle">Fluxo Admin (protegido)</text>
+  <rect x="370" y="1048" width="280" height="36" rx="8" class="bg-gray" stroke-width="0.5"/>
+  <text class="th" x="510" y="1066" text-anchor="middle" dominant-baseline="central">GET /admin/produtos</text>
+  <line x1="510" y1="1084" x2="510" y2="1104" class="arr" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="370" y="1106" width="280" height="36" rx="8" class="bg-blue" stroke-width="0.5"/>
+  <text class="th" x="510" y="1124" text-anchor="middle" dominant-baseline="central">admin.routes.js</text>
+  <line x1="510" y1="1142" x2="510" y2="1162" class="arr" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="370" y="1164" width="280" height="36" rx="8" class="bg-amber" stroke-width="0.5"/>
+  <text class="th" x="510" y="1182" text-anchor="middle" dominant-baseline="central">requireAuth — verifica JWT cookie</text>
+  <line x1="510" y1="1200" x2="510" y2="1220" class="arr" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="370" y="1222" width="280" height="36" rx="8" class="bg-teal" stroke-width="0.5"/>
+  <text class="th" x="510" y="1240" text-anchor="middle" dominant-baseline="central">product.controller.list</text>
+  <line x1="510" y1="1258" x2="510" y2="1278" class="arr" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="370" y="1280" width="280" height="36" rx="8" class="bg-purple" stroke-width="0.5"/>
+  <text class="th" x="510" y="1298" text-anchor="middle" dominant-baseline="central">Product.model.findAll</text>
+  <line x1="510" y1="1316" x2="510" y2="1336" class="arr" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="370" y="1338" width="280" height="36" rx="8" class="bg-coral" stroke-width="0.5"/>
+  <text class="th" x="510" y="1356" text-anchor="middle" dominant-baseline="central">render: admin/products/index.ejs</text>
+
+  <!-- LEGENDA -->
+  <text class="lbl" x="340" y="1410" text-anchor="middle">Legenda de Cores</text>
+  <rect x="30"  y="1418" width="14" height="14" rx="3" class="bg-purple" stroke-width="0.5"/>
+  <text class="ts" x="50"  y="1428" dominant-baseline="central">Entry / Models</text>
+  <rect x="165" y="1418" width="14" height="14" rx="3" class="bg-blue"   stroke-width="0.5"/>
+  <text class="ts" x="185" y="1428" dominant-baseline="central">Rotas</text>
+  <rect x="260" y="1418" width="14" height="14" rx="3" class="bg-amber"  stroke-width="0.5"/>
+  <text class="ts" x="280" y="1428" dominant-baseline="central">Middlewares</text>
+  <rect x="380" y="1418" width="14" height="14" rx="3" class="bg-teal"   stroke-width="0.5"/>
+  <text class="ts" x="400" y="1428" dominant-baseline="central">Controllers</text>
+  <rect x="490" y="1418" width="14" height="14" rx="3" class="bg-coral"  stroke-width="0.5"/>
+  <text class="ts" x="510" y="1428" dominant-baseline="central">Views EJS</text>
+  <rect x="580" y="1418" width="14" height="14" rx="3" class="bg-gray"   stroke-width="0.5"/>
+  <text class="ts" x="600" y="1428" dominant-baseline="central">Browser/DB</text>
+
+  <!-- ROLES -->
+  <rect x="30"  y="1450" width="290" height="50" rx="8" class="bg-teal" stroke-width="0.5"/>
+  <text class="th" x="175" y="1469" text-anchor="middle" dominant-baseline="central">Role: admin</text>
+  <text class="ts" x="175" y="1487" text-anchor="middle" dominant-baseline="central">Produtos · Home · Marketing · Usuarios · Senhas</text>
+  <rect x="360" y="1450" width="290" height="50" rx="8" class="bg-gray" stroke-width="0.5"/>
+  <text class="th" x="505" y="1469" text-anchor="middle" dominant-baseline="central">Role: editor</text>
+  <text class="ts" x="505" y="1487" text-anchor="middle" dominant-baseline="central">Produtos · Home Editor · Propria senha</text>
+</svg>

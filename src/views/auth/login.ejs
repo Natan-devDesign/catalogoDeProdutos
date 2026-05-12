@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Login · BRIWAX Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue-deep:#071470;--blue-mid:#1135b8;--blue-bright:#2352e8;
+  --blue-glow:#60a5fa;--white:#ffffff;--off-white:#f0f5ff;
+  --border:rgba(255,255,255,.15);--border-blue:rgba(35,82,232,.25);
+  --danger:#ef4444;
+}
+html,body{height:100%}
+body{
+  font-family:'Rajdhani',sans-serif;
+  background:var(--blue-deep);
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;overflow:hidden;
+  position:relative;
+}
+
+/* Fundo animado igual ao site */
+body::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 50%, rgba(35,82,232,.25) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 80% 30%, rgba(17,53,184,.2) 0%, transparent 70%);
+  pointer-events:none;
+}
+
+/* Grade de linhas */
+body::after{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+  background-size:50px 50px;
+  pointer-events:none;
+}
+
+.login-card{
+  position:relative;z-index:10;
+  width:min(420px,calc(100% - 2rem));
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--border);
+  backdrop-filter:blur(12px);
+  padding:3rem 2.5rem 2.5rem;
+  clip-path:polygon(12px 0%,100% 0%,100% calc(100% - 12px),calc(100% - 12px) 100%,0% 100%,0% 12px);
+  animation:fadeUp .5s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+.login-logo{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:2.4rem;letter-spacing:.25em;
+  color:var(--white);
+  margin-bottom:.2rem;
+  display:block;text-align:center;
+}
+.login-sub{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.58rem;letter-spacing:.3em;
+  color:rgba(255,255,255,.3);
+  text-align:center;margin-bottom:2.5rem;
+  text-transform:uppercase;
+}
+
+.form-group{
+  display:flex;flex-direction:column;gap:.4rem;
+  margin-bottom:1.2rem;
+}
+label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.58rem;letter-spacing:.22em;
+  color:rgba(255,255,255,.45);
+  text-transform:uppercase;
+}
+input{
+  font-family:'Rajdhani',sans-serif;font-size:.95rem;font-weight:500;
+  background:rgba(255,255,255,.06);
+  border:1.5px solid rgba(255,255,255,.12);
+  color:var(--white);
+  padding:.75rem 1rem;
+  outline:none;
+  transition:border-color .25s,background .25s;
+  clip-path:polygon(4px 0%,100% 0%,100% calc(100% - 4px),calc(100% - 4px) 100%,0% 100%,0% 4px);
+  width:100%;
+}
+input::placeholder{color:rgba(255,255,255,.2)}
+input:focus{
+  border-color:var(--blue-bright);
+  background:rgba(255,255,255,.09);
+}
+
+.error-msg{
+  background:rgba(239,68,68,.1);
+  border:1px solid rgba(239,68,68,.3);
+  color:#fca5a5;
+  font-size:.78rem;letter-spacing:.06em;
+  padding:.7rem 1rem;
+  margin-bottom:1.2rem;
+  display:flex;align-items:center;gap:.5rem;
+}
+.error-msg svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0}
+
+.btn-login{
+  width:100%;
+  font-family:'Rajdhani',sans-serif;font-weight:700;
+  font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;
+  padding:.85rem;
+  background:var(--blue-mid);
+  border:1.5px solid var(--blue-mid);
+  color:var(--white);
+  cursor:pointer;
+  transition:all .25s;
+  clip-path:polygon(5px 0%,100% 0%,100% calc(100% - 5px),calc(100% - 5px) 100%,0% 100%,0% 5px);
+  margin-top:.5rem;
+  position:relative;overflow:hidden;
+}
+.btn-login::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,transparent 40%,rgba(255,255,255,.08) 50%,transparent 60%);
+  transform:translateX(-100%);transition:transform .4s;
+}
+.btn-login:hover{background:var(--blue-bright);border-color:var(--blue-bright)}
+.btn-login:hover::before{transform:translateX(100%)}
+.btn-login:active{transform:scale(.99)}
+
+.login-footer{
+  margin-top:2rem;text-align:center;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.55rem;letter-spacing:.2em;
+  color:rgba(255,255,255,.18);
+}
+.login-footer a{color:rgba(255,255,255,.35);text-decoration:none;transition:color .2s}
+.login-footer a:hover{color:rgba(255,255,255,.6)}
+
+/* Partículas decorativas */
+.particle{
+  position:absolute;border-radius:50%;pointer-events:none;
+  animation:float linear infinite;
+}
+@keyframes float{from{transform:translateY(110vh) rotate(0)}to{transform:translateY(-10vh) rotate(720deg)}}
+</style>
+</head>
+<body>
+
+<!-- Partículas decorativas -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  for (let i = 0; i < 8; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 4 + 1;
+    p.style.cssText = `
+      width:${size}px;height:${size}px;
+      left:${Math.random()*100}%;
+      bottom:-10px;
+      background:rgba(96,165,250,${Math.random()*.15+.03});
+      animation-duration:${Math.random()*20+15}s;
+      animation-delay:${Math.random()*10}s;
+    `;
+    document.body.appendChild(p);
+  }
+});
+</script>
+
+<div class="login-card">
+  <span class="login-logo">BRIWAX</span>
+  <p class="login-sub">// Painel Administrativo</p>
+
+  <% if (error) { %>
+  <div class="error-msg">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <%= error %>
+  </div>
+  <% } %>
+
+  <form action="/auth/login" method="POST" autocomplete="off">
+    <div class="form-group">
+      <label for="email">E-mail</label>
+      <input type="email" id="email" name="email"
+             placeholder="admin@briwax.com.br"
+             autocomplete="username" required/>
+    </div>
+    <div class="form-group">
+      <label for="password">Senha</label>
+      <input type="password" id="password" name="password"
+             placeholder="••••••••"
+             autocomplete="current-password" required/>
+    </div>
+    <button type="submit" class="btn-login">Entrar no Painel</button>
+  </form>
+
+  <div class="login-footer">
+    <a href="/" target="_blank">← Voltar ao site</a>
+    &nbsp;·&nbsp;
+    BRIWAX © <%= new Date().getFullYear() %>
+  </div>
+</div>
+</body>
+</html>

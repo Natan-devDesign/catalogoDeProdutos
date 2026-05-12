@@ -1,0 +1,525 @@
+<%
+pageTitle   = 'Editor da Home';
+currentPage = 'home-editor';
+breadcrumb  = '// SITE / HOME';
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title><%= pageTitle %> &middot; BRIWAX Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--blue-deep:#071470;--blue-mid:#1135b8;--blue-bright:#2352e8;--white:#fff;--off-white:#f0f5ff;--gray:#e8eef8;--text-dark:#0d1a5c;--text-muted:#5a6fa8;--border-blue:rgba(35,82,232,.15);--success:#16a34a;--danger:#dc2626;--warning:#d97706;--sidebar-w:260px;--topbar-h:60px}
+html,body{height:100%}body{font-family:'Rajdhani',sans-serif;background:var(--off-white);color:var(--text-dark);display:flex;overflow-x:hidden}
+.sidebar{width:var(--sidebar-w);min-height:100vh;background:var(--blue-deep);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:200}
+.sidebar-logo{font-family:'Bebas Neue',sans-serif;font-size:1.65rem;letter-spacing:.2em;color:var(--white);padding:1.4rem 1.5rem 1rem;border-bottom:1px solid rgba(255,255,255,.08);text-decoration:none;display:block}
+.sidebar-section{padding:.8rem 1.5rem .3rem;font-family:'Share Tech Mono',monospace;font-size:.55rem;letter-spacing:.28em;color:rgba(255,255,255,.25);text-transform:uppercase}
+.sidebar-nav{flex:1;padding:.5rem 0;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:.75rem;padding:.78rem 1.5rem;font-weight:600;font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.6);text-decoration:none;border-left:3px solid transparent;transition:all .2s}
+.nav-item svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;flex-shrink:0}
+.nav-item:hover{color:rgba(255,255,255,.9);background:rgba(255,255,255,.05);border-left-color:rgba(255,255,255,.2)}
+.nav-item.active{color:var(--white);background:rgba(35,82,232,.25);border-left-color:var(--blue-bright)}
+.sidebar-user{padding:1rem 1.5rem;border-top:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:.75rem}
+.user-avatar{width:34px;height:34px;border-radius:50%;background:var(--blue-bright);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--white);flex-shrink:0}
+.user-info{flex:1;min-width:0}.user-name{font-weight:700;font-size:.8rem;letter-spacing:.06em;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.user-role{font-size:.65rem;color:rgba(255,255,255,.4);letter-spacing:.1em;text-transform:uppercase}
+.logout-btn{color:rgba(255,255,255,.4);background:none;border:none;cursor:pointer;padding:4px;transition:color .2s}.logout-btn:hover{color:rgba(255,255,255,.9)}.logout-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8}
+.main-wrap{margin-left:var(--sidebar-w);flex:1;min-height:100vh;display:flex;flex-direction:column}
+.topbar{height:var(--topbar-h);background:var(--white);border-bottom:1px solid var(--border-blue);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;position:sticky;top:0;z-index:100;box-shadow:0 1px 12px rgba(7,20,112,.06)}
+.page-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.1em;color:var(--text-dark)}.page-breadcrumb{font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.18em;color:var(--text-muted)}
+.site-link{color:var(--text-muted);font-size:.72rem;font-weight:600;letter-spacing:.1em;text-decoration:none;display:flex;align-items:center;gap:.3rem;transition:color .2s}.site-link:hover{color:var(--blue-mid)}.site-link svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
+.page-content{flex:1;padding:2rem 2.5rem 3rem}
+.flash{padding:.85rem 1.2rem;margin-bottom:1.5rem;font-weight:600;font-size:.85rem;letter-spacing:.06em;border-left:3px solid;display:flex;align-items:center;gap:.6rem}.flash svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0}.flash-success{background:rgba(22,163,74,.08);border-color:var(--success);color:var(--success)}.flash-error{background:rgba(220,38,38,.08);border-color:var(--danger);color:var(--danger)}
+.form-section{padding:1.4rem 1.5rem;background:var(--white);border:1px solid var(--border-blue);margin-bottom:1.2rem}
+.form-section-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.1em;color:var(--text-dark);margin-bottom:1rem;padding-bottom:.6rem;border-bottom:1px solid var(--border-blue);display:flex;align-items:center;justify-content:space-between}
+.form-section-title svg{width:16px;height:16px;flex-shrink:0}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+.form-group{display:flex;flex-direction:column;gap:.4rem}
+.form-group.span2{grid-column:span 2}
+label{font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.2em;color:var(--text-muted);text-transform:uppercase}
+label .req{color:var(--blue-bright)}
+input[type=text],input[type=url],textarea,select{font-family:'Rajdhani',sans-serif;font-size:.92rem;font-weight:500;letter-spacing:.04em;background:var(--off-white);border:1.5px solid var(--border-blue);color:var(--text-dark);padding:.65rem .9rem;outline:none;transition:border-color .25s;width:100%;clip-path:polygon(5px 0%,100% 0%,100% calc(100% - 5px),calc(100% - 5px) 100%,0% 100%,0% 5px)}
+input[type=text]:focus,input[type=url]:focus,textarea:focus,select:focus{border-color:var(--blue-bright)}
+textarea{resize:vertical;min-height:80px;clip-path:none}
+.form-hint{font-size:.72rem;color:var(--text-muted);letter-spacing:.04em}
+.form-actions{display:flex;align-items:center;justify-content:flex-end;padding-top:.75rem;margin-top:.5rem}
+.btn{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;padding:.5rem 1.3rem;cursor:pointer;transition:all .22s;display:inline-flex;align-items:center;gap:.4rem;text-decoration:none;border:1.5px solid;clip-path:polygon(5px 0%,100% 0%,100% calc(100% - 5px),calc(100% - 5px) 100%,0% 100%,0% 5px)}
+.btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.btn-primary{background:var(--blue-mid);border-color:var(--blue-mid);color:var(--white)}.btn-primary:hover{background:var(--blue-bright);border-color:var(--blue-bright)}
+.btn-outline{background:transparent;border-color:var(--border-blue);color:var(--text-muted)}.btn-outline:hover{border-color:var(--blue-bright);color:var(--blue-bright)}
+.btn-danger{background:transparent;border-color:rgba(220,38,38,.3);color:var(--danger)}.btn-danger:hover{background:rgba(220,38,38,.08)}
+/* TOGGLE */
+.toggle-wrap{display:flex;align-items:center;gap:.75rem;margin-top:.3rem}
+.toggle{position:relative;width:42px;height:24px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-track{position:absolute;inset:0;border-radius:12px;background:var(--gray);transition:background .25s;cursor:pointer;display:block}
+.toggle input:checked + .toggle-track{background:var(--blue-mid)}
+.toggle-track::after{content:'';position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:var(--white);transition:transform .25s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.toggle input:checked + .toggle-track::after{transform:translateX(18px)}
+.toggle-label{font-weight:600;font-size:.82rem;color:var(--text-dark)}
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(7,20,112,.6);display:none;align-items:center;justify-content:center;z-index:500;backdrop-filter:blur(4px);padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:var(--white);width:min(700px,100%);max-height:85vh;display:flex;flex-direction:column;animation:modalIn .3s cubic-bezier(.16,1,.3,1) both}
+@keyframes modalIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.modal-header{padding:1.2rem 1.5rem;border-bottom:1px solid var(--border-blue);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.1em;color:var(--text-dark)}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--text-muted);padding:4px;transition:color .2s}.modal-close:hover{color:var(--text-dark)}.modal-close svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2}
+.modal-body{flex:1;overflow-y:auto;padding:1.2rem 1.5rem}
+.modal-footer{padding:1rem 1.5rem;border-top:1px solid var(--border-blue);display:flex;align-items:center;justify-content:flex-end;gap:.75rem;flex-shrink:0}
+/* PRODUCT GRID MODAL */
+.modal-product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.6rem;max-height:55vh;overflow-y:auto;padding-right:2px}
+.modal-prod-card{border:2px solid var(--border-blue);background:var(--white);padding:.65rem;cursor:pointer;transition:all .2s;position:relative;text-align:center}
+.modal-prod-card.selected{border-color:var(--blue-bright);background:rgba(35,82,232,.05)}
+.modal-prod-card .check{position:absolute;top:5px;right:5px;width:18px;height:18px;border-radius:50%;background:var(--blue-bright);display:none;align-items:center;justify-content:center}
+.modal-prod-card.selected .check{display:flex}
+.modal-prod-card .check svg{width:10px;height:10px;stroke:white;fill:none;stroke-width:3}
+.modal-prod-card img{width:100%;aspect-ratio:1;object-fit:contain;margin-bottom:.4rem}
+.modal-prod-card .p-sku{font-family:'Share Tech Mono',monospace;font-size:.55rem;color:var(--text-muted);display:block;margin-bottom:2px}
+.modal-prod-card .p-name{font-size:.75rem;font-weight:700;letter-spacing:.04em;line-height:1.3;color:var(--text-dark)}
+/* DRAG & DROP — REORDER */
+.reorder-panel{background:var(--white);border:1px solid var(--border-blue);padding:1.4rem 1.5rem;margin-bottom:1.2rem}
+.reorder-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.1em;color:var(--text-dark);margin-bottom:.4rem}
+.reorder-subtitle{font-size:.78rem;color:var(--text-muted);letter-spacing:.04em;margin-bottom:1rem}
+.reorder-list{display:flex;flex-direction:column;gap:.5rem}
+.reorder-item{display:flex;align-items:center;gap:.9rem;padding:.75rem 1rem;background:var(--off-white);border:1.5px solid var(--border-blue);cursor:grab;transition:border-color .2s,box-shadow .2s;user-select:none}
+.reorder-item:active{cursor:grabbing;box-shadow:0 6px 20px rgba(7,20,112,.15);border-color:var(--blue-mid)}
+.reorder-item.drag-over{border-color:var(--blue-bright);background:rgba(35,82,232,.05)}
+.reorder-item.dragging{opacity:.4}
+.drag-handle{color:var(--text-muted);display:flex;align-items:center;flex-shrink:0}.drag-handle svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+.reorder-icon{width:32px;height:32px;background:var(--blue-mid);display:flex;align-items:center;justify-content:center;flex-shrink:0}.reorder-icon svg{width:14px;height:14px;stroke:white;fill:none;stroke-width:2}
+.reorder-label{flex:1}.reorder-key{font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:.06em;color:var(--text-dark)}.reorder-desc{font-size:.72rem;color:var(--text-muted);letter-spacing:.04em}
+.reorder-badge{font-family:'Share Tech Mono',monospace;font-size:.55rem;letter-spacing:.12em;padding:2px 8px;margin-left:auto;flex-shrink:0}
+.badge-visible{background:rgba(22,163,74,.1);color:var(--success)}.badge-hidden{background:rgba(107,114,128,.1);color:var(--text-muted)}
+.reorder-save-bar{display:flex;align-items:center;justify-content:space-between;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border-blue)}
+.reorder-save-bar span{font-size:.78rem;color:var(--text-muted);letter-spacing:.04em}
+/* FEATURED CURRENT LIST */
+.featured-current{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.75rem;margin-top:1rem}
+.feat-thumb{border:1px solid var(--border-blue);background:var(--white);padding:.65rem;text-align:center}
+.feat-thumb img{width:100%;aspect-ratio:1;object-fit:contain;margin-bottom:.4rem}
+.feat-thumb .f-sku{font-family:'Share Tech Mono',monospace;font-size:.55rem;color:var(--text-muted);display:block}
+.feat-thumb .f-name{font-size:.75rem;font-weight:700;line-height:1.3;color:var(--text-dark)}
+.empty-featured{border:1.5px dashed var(--border-blue);padding:2rem;text-align:center;color:var(--text-muted);font-size:.82rem;letter-spacing:.06em}
+@media(max-width:900px){.main-wrap{margin-left:0}.page-content{padding:1.2rem 1rem 2rem}.form-grid{grid-template-columns:1fr}.form-group.span2{grid-column:span 1}}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <a href="/admin" class="sidebar-logo">BRIWAX</a>
+  <nav class="sidebar-nav">
+    <div class="sidebar-section">Principal</div>
+    <a href="/admin" class="nav-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <div class="sidebar-section">Catalogo</div>
+    <a href="/admin/produtos" class="nav-item"><svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Produtos</a>
+    <a href="/admin/produtos/novo" class="nav-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Adicionar Produto</a>
+    <div class="sidebar-section">Site</div>
+    <a href="/admin/home-editor" class="nav-item active"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Editor da Home</a>
+    <% if(user.role === 'admin'){ %>
+    <div class="sidebar-section">Marketing</div>
+    <a href="/admin/marketing" class="nav-item"><svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>Marketing &amp; Analytics</a>
+    <a href="/admin/usuarios" class="nav-item"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Usuarios</a>
+    <% } %>
+  </nav>
+  <div class="sidebar-user">
+    <div class="user-avatar"><%= user.name.charAt(0).toUpperCase() %></div>
+    <div class="user-info"><div class="user-name"><%= user.name %></div><div class="user-role"><%= user.role %></div></div>
+    <form action="/auth/logout" method="POST" style="margin:0"><button type="submit" class="logout-btn" title="Sair"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button></form>
+  </div>
+</aside>
+
+<div class="main-wrap">
+  <header class="topbar">
+    <div><div class="page-title"><%= pageTitle %></div><div class="page-breadcrumb"><%= breadcrumb %></div></div>
+    <a href="/" target="_blank" class="site-link"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver Site</a>
+  </header>
+  <main class="page-content">
+
+    <% if(flash){ %>
+    <div class="flash flash-<%= flash.type %>">
+      <svg viewBox="0 0 24 24"><% if(flash.type === 'success'){ %><polyline points="20 6 9 17 4 12"/><% } else { %><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/><% } %></svg>
+      <%= flash.message %>
+    </div>
+    <% } %>
+
+    <!-- ═══════════════════════════════════════════════════════
+         PAINEL DE REORDENAÇÃO — DRAG & DROP
+    ════════════════════════════════════════════════════════════ -->
+    <div class="reorder-panel">
+      <div class="reorder-title">Ordem das Secoes</div>
+      <div class="reorder-subtitle">Arraste os itens para definir a ordem de exibicao das secoes na pagina inicial.</div>
+      <%
+        var sectionMeta = {
+          hero:              { label: 'Hero (Topo)',             desc: 'Banner principal com beams e navegacao', icon: '<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>' },
+          feature_blue:      { label: 'Destaque Azul',           desc: '1o produto em destaque — fundo azul', icon: '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>' },
+          featured_products: { label: 'Linha de Produtos',       desc: 'Grid de cards horizontais dos produtos', icon: '<path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/>' },
+          feature_dark:      { label: 'Destaque Escuro',         desc: 'Ultimo produto em destaque — fundo escuro', icon: '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>' },
+          about:             { label: 'Quem Somos',              desc: 'Secao sobre a empresa com circulo animado', icon: '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>' },
+          categories:        { label: 'Segmentos / Catalogos',   desc: 'Grid com os catalogos de cada categoria', icon: '<path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/>' },
+          contact:           { label: 'Fale Conosco',            desc: 'Secao de contato com botao WhatsApp', icon: '<path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.18 6.18l1.27-.83a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>' },
+          footer:            { label: 'Rodape',                  desc: 'Logo, tagline e redes sociais', icon: '<line x1="3" y1="22" x2="21" y2="22"/><path d="M18 6H6l-2 8h16l-2-8z"/><path d="M12 2v4"/>' }
+        };
+        var sortedKeys = Object.keys(sections).sort(function(a,b){
+          var sa = sections[a] ? (sections[a].sort_order || 99) : 99;
+          var sb = sections[b] ? (sections[b].sort_order || 99) : 99;
+          return sa - sb;
+        });
+        // Incluir chaves de sectionMeta que podem nao estar no banco ainda
+        Object.keys(sectionMeta).forEach(function(k){
+          if(sortedKeys.indexOf(k) === -1) sortedKeys.push(k);
+        });
+      %>
+      <div class="reorder-list" id="reorderList">
+        <% sortedKeys.forEach(function(key){ %>
+        <% var meta = sectionMeta[key]; %>
+        <% if(!meta) return; %>
+        <% var sec = sections[key]; %>
+        <div class="reorder-item" draggable="true" data-key="<%= key %>">
+          <span class="drag-handle"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="18" x2="16" y2="18"/></svg></span>
+          <div class="reorder-icon"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><%- meta.icon %></svg></div>
+          <div class="reorder-label">
+            <div class="reorder-key"><%= meta.label %></div>
+            <div class="reorder-desc"><%= meta.desc %></div>
+          </div>
+          <span class="reorder-badge <%= (sec && sec.is_visible !== false) ? 'badge-visible' : 'badge-hidden' %>">
+            <%= (sec && sec.is_visible !== false) ? 'VISIVEL' : 'OCULTA' %>
+          </span>
+        </div>
+        <% }); %>
+      </div>
+      <div class="reorder-save-bar">
+        <span>Arraste para reordenar. Clique em Salvar quando terminar.</span>
+        <button class="btn btn-primary" id="saveOrderBtn" onclick="saveOrder()">
+          <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Salvar Ordem
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         EDITOR — HERO
+    ════════════════════════════════════════════════════════════ -->
+    <div class="form-section">
+      <div class="form-section-title">
+        <div style="display:flex;align-items:center;gap:.6rem">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue-bright)" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Hero (Topo)
+        </div>
+      </div>
+      <form action="/admin/home-editor/hero" method="POST">
+        <div class="form-grid">
+          <div class="form-group span2"><label>Subtitulo / Tagline</label><input type="text" name="subtitle" value="<%= (sections.hero && sections.hero.subtitle) ? sections.hero.subtitle : '' %>"/></div>
+          <div class="form-group"><label>Eyebrow (texto pequeno acima)</label><input type="text" name="extra_eyebrow" value="<%= (sections.hero && sections.hero.extra_data && sections.hero.extra_data.eyebrow) ? sections.hero.extra_data.eyebrow : '' %>"/></div>
+          <div class="form-group"><label>Numero WhatsApp (so digitos)</label><input type="text" name="extra_whatsapp" value="<%= (sections.hero && sections.hero.extra_data && sections.hero.extra_data.whatsapp) ? sections.hero.extra_data.whatsapp : '' %>" placeholder="5511962769557"/></div>
+        </div>
+        <div class="form-actions"><button type="submit" class="btn btn-primary"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Salvar Hero</button></div>
+      </form>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         EDITOR — LINHA DE PRODUTOS (cards) + MODAIS
+    ════════════════════════════════════════════════════════════ -->
+    <div class="form-section">
+      <div class="form-section-title">
+        <div style="display:flex;align-items:center;gap:.6rem">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue-bright)" stroke-width="2"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+          Produtos em Destaque (todas as secoes)
+        </div>
+      </div>
+      <div style="background:rgba(35,82,232,.05);border:1px solid var(--border-blue);padding:1rem;margin-bottom:1.2rem;font-size:.82rem;color:var(--text-muted);letter-spacing:.04em;line-height:1.7">
+        Os produtos selecionados aqui sao distribuidos automaticamente nas 3 secoes de produtos da home:<br/>
+        <strong style="color:var(--text-dark)">1o produto</strong> &rarr; Destaque Azul (feature-blue) &nbsp;&bull;&nbsp;
+        <strong style="color:var(--text-dark)">produtos do meio</strong> &rarr; Linha de Produtos (cards) &nbsp;&bull;&nbsp;
+        <strong style="color:var(--text-dark)">ultimo produto</strong> &rarr; Destaque Escuro (feature-dark)
+      </div>
+
+      <form action="/admin/home-editor/featured_products" method="POST" style="margin-bottom:1.2rem">
+        <div class="form-grid">
+          <div class="form-group"><label>Titulo da Secao de Cards</label><input type="text" name="title" value="<%= (sections.featured_products && sections.featured_products.title) ? sections.featured_products.title : 'Moving Heads' %>"/></div>
+          <div class="form-group"><label>Subtitulo / Eyebrow</label><input type="text" name="subtitle" value="<%= (sections.featured_products && sections.featured_products.subtitle) ? sections.featured_products.subtitle : 'Linha de Produtos' %>"/></div>
+        </div>
+        <div class="form-actions"><button type="submit" class="btn btn-outline"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Salvar Titulos</button></div>
+      </form>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <div style="font-weight:700;font-size:.88rem;letter-spacing:.06em">Produtos Selecionados</div>
+          <div style="font-size:.75rem;color:var(--text-muted);margin-top:2px"><%= featuredProducts.length %> produto(s) em destaque</div>
+        </div>
+        <button class="btn btn-primary" onclick="openFeaturedModal()">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Gerenciar Produtos
+        </button>
+      </div>
+
+      <% if(featuredProducts && featuredProducts.length > 0){ %>
+      <div class="featured-current">
+        <% featuredProducts.forEach(function(p, i){ %>
+        <div class="feat-thumb">
+          <% if(i === 0){ %><div style="font-family:'Share Tech Mono',monospace;font-size:.5rem;letter-spacing:.14em;background:var(--blue-mid);color:white;padding:2px 6px;margin-bottom:.3rem;display:inline-block">AZUL</div><% } %>
+          <% if(i > 0 && i < featuredProducts.length-1){ %><div style="font-family:'Share Tech Mono',monospace;font-size:.5rem;letter-spacing:.14em;background:var(--text-muted);color:white;padding:2px 6px;margin-bottom:.3rem;display:inline-block">CARD</div><% } %>
+          <% if(featuredProducts.length > 1 && i === featuredProducts.length-1){ %><div style="font-family:'Share Tech Mono',monospace;font-size:.5rem;letter-spacing:.14em;background:var(--blue-deep);color:white;padding:2px 6px;margin-bottom:.3rem;display:inline-block">ESCURO</div><% } %>
+          <% if(p.cover_image){ %>
+          <img src="<%= p.cover_image %>" alt="<%= p.name %>"/>
+          <% } else { %>
+          <div style="width:100%;aspect-ratio:1;background:var(--gray);display:flex;align-items:center;justify-content:center;margin-bottom:.4rem"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(35,82,232,.2)" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+          <% } %>
+          <span class="f-sku"><%= p.sku %></span>
+          <span class="f-name"><%= p.name %></span>
+        </div>
+        <% }); %>
+      </div>
+      <% } else { %>
+      <div class="empty-featured">Nenhum produto selecionado. Clique em "Gerenciar Produtos".</div>
+      <% } %>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         EDITOR — CONTATO
+    ════════════════════════════════════════════════════════════ -->
+    <div class="form-section">
+      <div class="form-section-title">
+        <div style="display:flex;align-items:center;gap:.6rem">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue-bright)" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.18 6.18l1.27-.83a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          Secao de Contato
+        </div>
+      </div>
+      <form action="/admin/home-editor/contact" method="POST">
+        <div class="form-grid">
+          <div class="form-group"><label>Titulo</label><input type="text" name="title" value="<%= (sections.contact && sections.contact.title) ? sections.contact.title : '' %>"/></div>
+          <div class="form-group"><label>Subtitulo / Eyebrow</label><input type="text" name="subtitle" value="<%= (sections.contact && sections.contact.subtitle) ? sections.contact.subtitle : '' %>"/></div>
+          <div class="form-group span2"><label>Texto de Chamada</label><textarea name="body"><%= (sections.contact && sections.contact.body) ? sections.contact.body : '' %></textarea></div>
+          <div class="form-group"><label>Numero WhatsApp</label><input type="text" name="extra_whatsapp" value="<%= (sections.contact && sections.contact.extra_data && sections.contact.extra_data.whatsapp) ? sections.contact.extra_data.whatsapp : '' %>"/></div>
+          <div class="form-group"><label>Mensagem pre-preenchida</label><input type="text" name="extra_whatsapp_text" value="<%= (sections.contact && sections.contact.extra_data && sections.contact.extra_data.whatsapp_text) ? sections.contact.extra_data.whatsapp_text : '' %>"/></div>
+          <div class="form-group"><label>Texto do Botao CTA</label><input type="text" name="cta_label" value="<%= (sections.contact && sections.contact.cta_label) ? sections.contact.cta_label : '' %>"/></div>
+          <div class="form-group"><label>Link do Botao CTA</label><input type="url" name="cta_url" value="<%= (sections.contact && sections.contact.cta_url) ? sections.contact.cta_url : '' %>"/></div>
+        </div>
+        <div class="form-actions"><button type="submit" class="btn btn-primary"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Salvar Contato</button></div>
+      </form>
+    </div>
+
+
+    <!-- ╙════════════════════════════════════════════════════════
+         EDITOR — QUEM SOMOS (ABOUT)
+    ════════════════════════════════════════════════════════ -->
+    <div class="form-section">
+      <div class="form-section-title">
+        <div style="display:flex;align-items:center;gap:.6rem">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue-bright)" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          Quem Somos (Sobre)
+        </div>
+      </div>
+      <form action="/admin/home-editor/about" method="POST">
+        <div class="form-grid">
+          <div class="form-group"><label>Titulo</label><input type="text" name="title" value="<%= (sections.about && sections.about.title) ? sections.about.title : 'Quem Somos' %>"/></div>
+          <div class="form-group"><label>Subtitulo / Eyebrow</label><input type="text" name="subtitle" value="<%= (sections.about && sections.about.subtitle) ? sections.about.subtitle : 'Sobre a Briwax' %>"/></div>
+          <div class="form-group span2"><label>Paragrafo 1</label><textarea name="body"><%= (sections.about && sections.about.body) ? sections.about.body : '' %></textarea><span class="form-hint">Texto principal exibido na secao.</span></div>
+          <div class="form-group span2"><label>Paragrafo 2</label><textarea name="extra_body2"><%= (sections.about && sections.about.extra_data && sections.about.extra_data.body2) ? sections.about.extra_data.body2 : '' %></textarea></div>
+          <div class="form-group"><label>Numero em Destaque (ex: 21)</label><input type="text" name="extra_circle_num" value="<%= (sections.about && sections.about.extra_data && sections.about.extra_data.circle_num) ? sections.about.extra_data.circle_num : '21' %>"/><span class="form-hint">Aparece no circulo animado.</span></div>
+          <div class="form-group"><label>Legenda do Numero</label><input type="text" name="extra_circle_lbl" value="<%= (sections.about && sections.about.extra_data && sections.about.extra_data.circle_lbl) ? sections.about.extra_data.circle_lbl : 'Anos de Mercado' %>"/></div>
+          <div class="form-group span2"><label>Tags (separadas por virgula)</label><input type="text" name="extra_tags" value="<%= (sections.about && sections.about.extra_data && sections.about.extra_data.tags) ? sections.about.extra_data.tags : 'Iluminacao Profissional, Automotivo, Tecnologia, Atacado, Exportadora' %>"/><span class="form-hint">Ex: Iluminacao Profissional, Automotivo, Tecnologia</span></div>
+        </div>
+        <div class="form-actions"><button type="submit" class="btn btn-primary"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Salvar Quem Somos</button></div>
+      </form>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         EDITOR — RODAPE
+    ════════════════════════════════════════════════════════════ -->
+    <div class="form-section">
+      <div class="form-section-title">
+        <div style="display:flex;align-items:center;gap:.6rem">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue-bright)" stroke-width="2"><line x1="3" y1="22" x2="21" y2="22"/><path d="M18 6H6l-2 8h16l-2-8z"/><path d="M12 2v4"/></svg>
+          Rodape
+        </div>
+      </div>
+      <form action="/admin/home-editor/footer" method="POST">
+        <div class="form-grid">
+          <div class="form-group span2"><label>Tagline do Rodape</label><input type="text" name="subtitle" value="<%= (sections.footer && sections.footer.subtitle) ? sections.footer.subtitle : '' %>"/></div>
+          <div class="form-group"><label>Localizacao</label><input type="text" name="extra_location" value="<%= (sections.footer && sections.footer.extra_data && sections.footer.extra_data.location) ? sections.footer.extra_data.location : '' %>"/></div>
+          <div class="form-group"><label>Texto de Copyright</label><input type="text" name="extra_copyright" value="<%= (sections.footer && sections.footer.extra_data && sections.footer.extra_data.copyright) ? sections.footer.extra_data.copyright : '' %>"/></div>
+          <div class="form-group"><label>URL Instagram</label><input type="url" name="extra_instagram" value="<%= (sections.footer && sections.footer.extra_data && sections.footer.extra_data.instagram) ? sections.footer.extra_data.instagram : '' %>"/></div>
+          <div class="form-group"><label>URL Facebook</label><input type="url" name="extra_facebook" value="<%= (sections.footer && sections.footer.extra_data && sections.footer.extra_data.facebook) ? sections.footer.extra_data.facebook : '' %>"/></div>
+          <div class="form-group"><label>URL LinkedIn</label><input type="url" name="extra_linkedin" value="<%= (sections.footer && sections.footer.extra_data && sections.footer.extra_data.linkedin) ? sections.footer.extra_data.linkedin : '' %>"/></div>
+          <div class="form-group"><label>URL WhatsApp</label><input type="url" name="extra_whatsapp_url" value="<%= (sections.footer && sections.footer.extra_data && sections.footer.extra_data.whatsapp) ? sections.footer.extra_data.whatsapp : '' %>"/></div>
+        </div>
+        <div class="form-actions"><button type="submit" class="btn btn-primary"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Salvar Rodape</button></div>
+      </form>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL FEATURED PICKER -->
+<div class="modal-overlay" id="featuredModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Gerenciar Produtos em Destaque</div>
+      <button class="modal-close" onclick="closeFeaturedModal()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:1rem;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap">
+        <div style="position:relative;flex:1;min-width:200px">
+          <svg style="position:absolute;left:.7rem;top:50%;transform:translateY(-50%);width:14px;height:14px;stroke:var(--text-muted);fill:none;stroke-width:2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="modalSearch" placeholder="Buscar produto por nome ou SKU..."
+                 style="width:100%;padding:.55rem .9rem .55rem 2.4rem;font-family:'Rajdhani',sans-serif;font-size:.88rem;background:var(--off-white);border:1.5px solid var(--border-blue);color:var(--text-dark);outline:none;clip-path:none"
+                 oninput="filterModal(this.value)"/>
+        </div>
+        <span id="modalCount" style="font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--text-muted);white-space:nowrap">0 selecionados</span>
+      </div>
+      <div style="background:rgba(35,82,232,.05);border:1px solid var(--border-blue);padding:.75rem 1rem;margin-bottom:1rem;font-size:.78rem;color:var(--text-muted);letter-spacing:.04em">
+        Selecione os produtos. A ordem de selecao define como eles aparecem nas secoes.
+      </div>
+      <div class="modal-product-grid" id="modalGrid">
+        <div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--text-muted);font-size:.82rem">Carregando produtos...</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeFeaturedModal()">Cancelar</button>
+      <button class="btn btn-primary" id="saveFeaturedBtn" onclick="saveFeatured()">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        Salvar Selecao
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   DRAG & DROP — REORDENAÇÃO
+════════════════════════════════════════════════════════════ */
+var dragSrc = null;
+var list    = document.getElementById('reorderList');
+
+list.querySelectorAll('.reorder-item').forEach(function(item){
+  item.addEventListener('dragstart', function(e){
+    dragSrc = this;
+    this.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  });
+  item.addEventListener('dragend', function(){
+    this.classList.remove('dragging');
+    list.querySelectorAll('.reorder-item').forEach(function(i){ i.classList.remove('drag-over'); });
+  });
+  item.addEventListener('dragover', function(e){
+    e.preventDefault();
+    if(this !== dragSrc){
+      list.querySelectorAll('.reorder-item').forEach(function(i){ i.classList.remove('drag-over'); });
+      this.classList.add('drag-over');
+    }
+  });
+  item.addEventListener('drop', function(e){
+    e.preventDefault();
+    if(this !== dragSrc){
+      var items = Array.from(list.querySelectorAll('.reorder-item'));
+      var srcIdx = items.indexOf(dragSrc);
+      var tgtIdx = items.indexOf(this);
+      if(srcIdx < tgtIdx){ this.after(dragSrc); }
+      else { this.before(dragSrc); }
+    }
+    this.classList.remove('drag-over');
+  });
+});
+
+function saveOrder(){
+  var btn = document.getElementById('saveOrderBtn');
+  btn.disabled = true;
+  btn.textContent = 'Salvando...';
+  var items = Array.from(list.querySelectorAll('.reorder-item'));
+  var order = items.map(function(item, idx){
+    return { key: item.dataset.key, sort_order: (idx + 1) * 10 };
+  });
+  fetch('/admin/home-editor/reorder', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ order: order })
+  }).then(function(r){ return r.json(); }).then(function(){
+    btn.disabled = false;
+    btn.textContent = 'Salvo!';
+    setTimeout(function(){ btn.textContent = 'Salvar Ordem'; }, 2000);
+  }).catch(function(){
+    btn.disabled = false;
+    btn.textContent = 'Erro — tentar novamente';
+    setTimeout(function(){ btn.textContent = 'Salvar Ordem'; }, 3000);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MODAL — SELEÇÃO DE PRODUTOS
+════════════════════════════════════════════════════════════ */
+var allProds   = [];
+// Usar sempre o UUID do produto (campo 'id' já aliasado no model como product_id)
+var selectedIds = (<%- JSON.stringify(featuredProducts.map(function(p){ return String(p.id); })) %>);
+
+async function openFeaturedModal(){
+  document.getElementById('featuredModal').classList.add('open');
+  if(allProds.length === 0){
+    var r = await fetch('/admin/api/produtos-disponiveis');
+    allProds = await r.json();
+  }
+  renderModalGrid(allProds);
+  updateCount();
+}
+function closeFeaturedModal(){
+  document.getElementById('featuredModal').classList.remove('open');
+}
+function filterModal(q){
+  var filtered = q
+    ? allProds.filter(function(p){ return p.name.toLowerCase().indexOf(q.toLowerCase()) > -1 || p.sku.toLowerCase().indexOf(q.toLowerCase()) > -1; })
+    : allProds;
+  renderModalGrid(filtered);
+}
+function renderModalGrid(prods){
+  var g = document.getElementById('modalGrid');
+  if(!prods.length){ g.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--text-muted)">Nenhum produto encontrado.</div>'; return; }
+  g.innerHTML = prods.map(function(p){
+    // p.id vem da API /api/produtos-disponiveis — sempre UUID do produto
+    var pid = String(p.id);
+    var sel = selectedIds.indexOf(pid) > -1;
+    return '<div class="modal-prod-card' + (sel ? ' selected' : '') + '" data-id="' + pid + '" onclick="toggleProd(\'' + pid + '\')">' +
+      '<div class="check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>' +
+      (p.cover_image ? '<img src="' + p.cover_image + '" alt="' + p.name + '"/>' : '<div style="width:100%;aspect-ratio:1;background:var(--gray);display:flex;align-items:center;justify-content:center;margin-bottom:.4rem"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(35,82,232,.2)" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div>') +
+      '<span class="p-sku">' + p.sku + '</span>' +
+      '<span class="p-name">' + p.name + '</span>' +
+    '</div>';
+  }).join('');
+}
+function toggleProd(id){
+  id = String(id);
+  // Garantir que é UUID válido antes de adicionar
+  var uuidRx = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if(!uuidRx.test(id)){ console.warn('ID inválido ignorado:', id); return; }
+  var idx = selectedIds.indexOf(id);
+  if(idx > -1){ selectedIds.splice(idx, 1); }
+  else { selectedIds.push(id); }
+  var card = document.querySelector('.modal-prod-card[data-id="' + id + '"]');
+  if(card) card.classList.toggle('selected', selectedIds.indexOf(id) > -1);
+  updateCount();
+}
+function updateCount(){
+  document.getElementById('modalCount').textContent = selectedIds.length + ' selecionado(s)';
+}
+async function saveFeatured(){
+  var btn = document.getElementById('saveFeaturedBtn');
+  btn.disabled = true; btn.textContent = 'Salvando...';
+  try{
+    var r = await fetch('/admin/home-editor/featured', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productIds: selectedIds })
+    });
+    if(!r.ok) throw new Error('Erro');
+    closeFeaturedModal();
+    window.location.reload();
+  } catch(e){
+    alert('Erro ao salvar. Tente novamente.');
+    btn.disabled = false; btn.textContent = 'Salvar Selecao';
+  }
+}
+document.getElementById('featuredModal').addEventListener('click', function(e){
+  if(e.target === this) closeFeaturedModal();
+});
+</script>
+</body>
+</html>

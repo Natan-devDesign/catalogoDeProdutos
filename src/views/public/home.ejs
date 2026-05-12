@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title><%= title %></title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<%- marketingHead %>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--blue-deep:#071470;--blue-mid:#1135b8;--blue-bright:#2352e8;--blue-light:#3b82f6;--blue-glow:#60a5fa;--white:#ffffff;--off-white:#f0f5ff;--gray:#e8eef8;--text-dark:#0d1a5c;--text-muted:#5a6fa8;--border:rgba(255,255,255,.18);--border-blue:rgba(35,82,232,.18)}
+html{scroll-behavior:smooth}body{font-family:'Rajdhani',sans-serif;background:var(--white);color:var(--text-dark);overflow-x:hidden}
+.nav{position:fixed;top:0;left:0;width:100%;z-index:1000;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 5%;background:var(--blue-deep);box-shadow:0 2px 24px rgba(7,20,112,.4)}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;letter-spacing:.2em;color:var(--white);text-decoration:none}
+.nav-links{display:flex;align-items:center;gap:2rem;list-style:none}
+.nav-links a{font-weight:600;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.75);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--white)}
+.dropdown{position:relative}.dropdown-menu{display:none;position:absolute;top:100%;left:0;background:var(--blue-deep);min-width:220px;border-top:2px solid var(--blue-bright);box-shadow:0 12px 32px rgba(7,20,112,.5)}.dropdown:hover .dropdown-menu{display:block}.dropdown-menu a{display:block;padding:.65rem 1.2rem;border-bottom:1px solid rgba(255,255,255,.07);font-size:.76rem}.dropdown-menu a:hover{background:rgba(255,255,255,.06);color:var(--white)}
+.nav-cta{font-weight:700;font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;padding:.5rem 1.4rem;border:1.5px solid rgba(255,255,255,.5);color:var(--white)!important;text-decoration:none;transition:all .25s;border-radius:2px}.nav-cta:hover{background:var(--white);color:var(--blue-deep)!important}
+.burger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none}.burger span{display:block;width:22px;height:1.5px;background:var(--white);transition:all .3s}
+@media(max-width:860px){.burger{display:flex}.nav-links{position:fixed;top:64px;left:0;width:100%;background:var(--blue-deep);flex-direction:column;align-items:flex-start;gap:0;padding:1rem 0;transform:translateY(-120%);transition:transform .35s ease;box-shadow:0 8px 32px rgba(7,20,112,.5)}.nav-links.open{transform:translateY(0)}.nav-links li{width:100%}.nav-links a{display:block;padding:.85rem 6%;font-size:.9rem}.nav-cta{display:none}.dropdown-menu{position:static;box-shadow:none;background:rgba(0,0,0,.15);border-top:none;border-left:2px solid var(--blue-bright);margin-left:1.5rem}}
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;padding-top:64px;background:linear-gradient(140deg,#040e55 0%,#0a1a80 45%,#0d1d8a 100%)}
+#beamCanvas{position:absolute;inset:0;width:100%;height:100%;opacity:.7}
+.hero-inner{position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;align-items:center;width:min(820px,92%);background:rgba(7,20,112,.55);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.14);animation:cardUp .9s cubic-bezier(.16,1,.3,1) both}
+@keyframes cardUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.hero-left{padding:3.5rem 2.5rem;border-right:1px solid rgba(255,255,255,.12);display:flex;flex-direction:column;gap:1.4rem}
+.hero-brand{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:.18em;color:var(--white)}
+.hero-tagline{font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.65);line-height:1.65;border-left:2px solid var(--blue-bright);padding-left:.9rem}
+.hero-socials{display:flex;gap:.9rem}.hero-socials a{color:rgba(255,255,255,.7);text-decoration:none;transition:color .2s,transform .2s}.hero-socials a:hover{color:var(--white);transform:translateY(-2px)}.hero-socials svg{width:18px;height:18px;fill:currentColor}
+.hero-right{padding:2.5rem 2rem;display:flex;flex-direction:column}
+.hero-nav-item{display:block;padding:.9rem 0;font-weight:700;font-size:.76rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.8);text-decoration:none;border-bottom:1px solid rgba(255,255,255,.1);transition:color .2s,padding-left .2s}.hero-nav-item:last-child{border-bottom:none}.hero-nav-item:hover{color:var(--white);padding-left:.6rem}
+@media(max-width:580px){.hero-inner{grid-template-columns:1fr}.hero-left{border-right:none;border-bottom:1px solid rgba(255,255,255,.12);padding:2.2rem 1.8rem}.hero-right{padding:1.8rem}}
+.led-strip{position:absolute;bottom:0;left:0;width:100%;height:16px;background:repeating-linear-gradient(90deg,#ff003c 0,#ff003c 10px,#ff7700 10px,#ff7700 20px,#ffe000 20px,#ffe000 30px,#00ff88 30px,#00ff88 40px,#00cfff 40px,#00cfff 50px,#8800ff 50px,#8800ff 60px);opacity:.65;z-index:3}
+.ticker{background:var(--blue-mid);overflow:hidden;border-top:1px solid rgba(255,255,255,.1);border-bottom:1px solid rgba(255,255,255,.1)}.ticker-inner{display:flex;width:max-content;animation:tickerRun 28s linear infinite}.ticker-item{padding:.8rem 2.5rem;font-family:'Share Tech Mono',monospace;font-size:.7rem;letter-spacing:.2em;color:rgba(255,255,255,.65);white-space:nowrap;border-right:1px solid rgba(255,255,255,.12)}.ticker-item span{color:rgba(255,255,255,.95);font-weight:700}
+@keyframes tickerRun{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-l{opacity:0;transform:translateX(-32px);transition:opacity .7s ease,transform .7s ease}.reveal-l.visible{opacity:1;transform:translateX(0)}
+.reveal-r{opacity:0;transform:translateX(32px);transition:opacity .7s ease,transform .7s ease}.reveal-r.visible{opacity:1;transform:translateX(0)}
+.eyebrow{font-family:'Share Tech Mono',monospace;font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;color:var(--blue-bright);margin-bottom:.5rem;display:block}
+.big-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(4rem,9vw,7.5rem);line-height:.88;letter-spacing:.04em}
+.btn-white-outline{display:inline-flex;align-items:center;gap:.5rem;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;padding:.75rem 2rem;text-decoration:none;border:2px solid rgba(255,255,255,.5);color:var(--white);transition:all .25s;clip-path:polygon(8px 0%,100% 0%,100% calc(100% - 8px),calc(100% - 8px) 100%,0% 100%,0% 8px)}.btn-white-outline:hover{background:var(--white);color:var(--blue-deep)}
+/* FEATURE BLUE */
+.feature-blue{background:var(--blue-mid);display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:3rem;padding:7rem 7%;position:relative;overflow:hidden}
+.feature-blue::before{content:'';position:absolute;right:-120px;top:-120px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.06),transparent 70%);pointer-events:none}
+.feature-blue .big-title{color:var(--white)}.feature-blue .sub{font-size:1rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.6);margin:.5rem 0 2rem}
+.product-img{display:flex;justify-content:center;align-items:center}.product-img img{max-width:100%;max-height:400px;object-fit:contain;filter:drop-shadow(0 24px 64px rgba(0,0,0,.35));animation:floatY 4s ease-in-out infinite}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@media(max-width:768px){.feature-blue{grid-template-columns:1fr;padding:5rem 6%;text-align:center}.product-img{order:-1}.product-img img{max-height:220px}}
+/* CARDS SECTION */
+.cards-section{background:var(--off-white);padding:5.5rem 6%}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;margin-top:2.5rem}
+.prod-card{background:var(--white);border:1px solid var(--border-blue);display:flex;align-items:center;gap:1.8rem;padding:2.2rem 2rem;transition:transform .3s,box-shadow .3s,border-color .3s;position:relative;overflow:hidden;text-decoration:none;color:inherit}
+.prod-card::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:3px;background:var(--blue-mid);transform:scaleX(0);transform-origin:left;transition:transform .35s ease}
+.prod-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(17,53,184,.12);border-color:rgba(35,82,232,.3)}.prod-card:hover::after{transform:scaleX(1)}
+.card-info{flex:1}.card-badge{font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:.22em;color:var(--blue-bright);margin-bottom:.35rem}
+.card-name{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;letter-spacing:.04em;color:var(--text-dark);margin-bottom:.3rem}
+.card-desc{font-size:.82rem;letter-spacing:.04em;color:var(--text-muted);line-height:1.5;margin-bottom:.3rem}
+.card-link{font-weight:700;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--blue-mid);text-decoration:none;display:inline-flex;align-items:center;gap:.3rem;transition:gap .2s,color .2s;margin-top:.5rem}.card-link::after{content:'\2192'}.prod-card:hover .card-link{gap:.6rem;color:var(--blue-deep)}
+.card-img{flex-shrink:0;width:110px}.card-img img{width:100%;object-fit:contain;filter:drop-shadow(0 4px 12px rgba(17,53,184,.15))}
+.card-img-placeholder{width:110px;height:110px;background:var(--off-white);border:1px solid var(--border-blue);display:flex;align-items:center;justify-content:center;flex-shrink:0}.card-img-placeholder svg{width:40px;height:40px;stroke:rgba(35,82,232,.2);fill:none;stroke-width:1}
+@media(max-width:480px){.prod-card{flex-direction:column;text-align:center}.card-img,.card-img-placeholder{width:90px;height:90px}}
+/* FEATURE DARK */
+.feature-dark{background:var(--blue-deep);display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:3rem;padding:7rem 7%;position:relative;overflow:hidden}
+.feature-dark::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.025) 0,rgba(255,255,255,.025) 1px,transparent 1px,transparent 50px),repeating-linear-gradient(-45deg,rgba(255,255,255,.025) 0,rgba(255,255,255,.025) 1px,transparent 1px,transparent 50px);pointer-events:none}
+.feature-dark .big-title{color:var(--white)}.feature-dark .sub{font-size:1rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.55);margin:.5rem 0 2rem}
+@media(max-width:768px){.feature-dark{grid-template-columns:1fr;padding:5rem 6%;text-align:center}}
+/* SOBRE */
+.about-section{background:var(--white);padding:7rem 7%;display:grid;grid-template-columns:1fr 1.2fr;gap:5rem;align-items:center}
+.about-deco{position:relative;display:flex;align-items:center;justify-content:center}
+.about-circle{width:340px;height:340px;border-radius:50%;background:linear-gradient(135deg,var(--blue-mid),var(--blue-deep));display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.5rem;box-shadow:0 20px 80px rgba(17,53,184,.25)}
+.about-circle-num{font-family:'Bebas Neue',sans-serif;font-size:5.5rem;letter-spacing:.05em;color:var(--white);line-height:1}
+.about-circle-lbl{font-size:.75rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.7)}
+.about-ring{position:absolute;width:370px;height:370px;border-radius:50%;border:1px dashed rgba(17,53,184,.2);animation:spin 30s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.about-text h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,4vw,3.2rem);letter-spacing:.04em;color:var(--text-dark);margin-bottom:1.2rem}
+.about-text p{font-size:.95rem;line-height:1.8;letter-spacing:.04em;color:var(--text-muted);margin-bottom:1rem}.about-text p strong{color:var(--text-dark)}
+.about-tags{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.5rem}
+.about-tag{font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;padding:.35rem .8rem;background:var(--off-white);border:1px solid var(--border-blue);color:var(--blue-mid)}
+@media(max-width:800px){.about-section{grid-template-columns:1fr;gap:3rem;text-align:center;padding:5rem 6%}.about-circle{width:240px;height:240px}.about-circle-num{font-size:4rem}.about-ring{width:270px;height:270px}.about-tags{justify-content:center}}
+/* CATEGORIAS */
+.cats-section{background:var(--off-white);padding:6rem 6%}
+.cats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-blue);border:1px solid var(--border-blue);margin-top:3rem}
+.cat-card{background:var(--white);padding:2.5rem 2rem;display:flex;flex-direction:column;gap:.8rem;transition:background .3s;position:relative;overflow:hidden}
+.cat-card::after{content:'';position:absolute;top:0;left:0;height:3px;width:100%;background:var(--blue-mid);transform:scaleX(0);transform-origin:left;transition:transform .35s}.cat-card:hover{background:var(--off-white)}.cat-card:hover::after{transform:scaleX(1)}
+.cat-icon{width:44px;height:44px;background:linear-gradient(135deg,var(--blue-mid),var(--blue-deep));display:flex;align-items:center;justify-content:center;clip-path:polygon(4px 0%,100% 0%,100% calc(100% - 4px),calc(100% - 4px) 100%,0% 100%,0% 4px)}.cat-icon svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:1.8}
+.cat-num{font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.22em;color:var(--text-muted)}
+.cat-name{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.05em;color:var(--text-dark)}
+.cat-desc{font-size:.82rem;letter-spacing:.05em;color:var(--text-muted);line-height:1.65}
+.cat-link{font-weight:700;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--blue-mid);text-decoration:none;margin-top:auto;display:inline-flex;align-items:center;gap:.3rem;transition:gap .2s}.cat-link::after{content:'\2192'}.cat-card:hover .cat-link{gap:.6rem}
+@media(max-width:768px){.cats-grid{grid-template-columns:1fr 1fr}}@media(max-width:480px){.cats-grid{grid-template-columns:1fr}}
+/* CONTACT */
+.contact-section{background:linear-gradient(135deg,var(--blue-mid) 0%,var(--blue-deep) 100%);padding:7rem 6%;text-align:center;position:relative;overflow:hidden}
+.contact-section::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.06),transparent 70%)}
+.contact-section h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,6vw,5rem);letter-spacing:.05em;color:var(--white);margin:1rem 0}
+.contact-section p{font-size:.9rem;letter-spacing:.12em;color:rgba(255,255,255,.6);text-transform:uppercase;margin-bottom:2.5rem}
+.contact-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
+/* FOOTER */
+footer{background:var(--blue-deep);padding:3.5rem 6%;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:2rem}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.2em;color:var(--white)}
+.footer-tagline{text-align:center;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.35);line-height:1.8;max-width:340px}
+.footer-socials{display:flex;gap:.8rem;justify-content:flex-end}.footer-socials a{width:36px;height:36px;border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;text-decoration:none;transition:all .25s;clip-path:polygon(4px 0%,100% 0%,100% calc(100% - 4px),calc(100% - 4px) 100%,0% 100%,0% 4px)}.footer-socials a:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.4)}.footer-socials svg{width:14px;height:14px;fill:rgba(255,255,255,.65)}.footer-socials a:hover svg{fill:var(--white)}
+.footer-bottom{background:rgba(0,0,0,.2);text-align:center;padding:1rem 6%;font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:.14em;color:rgba(255,255,255,.2)}
+@media(max-width:680px){footer{grid-template-columns:1fr;text-align:center}.footer-socials{justify-content:center}.footer-logo{text-align:center}}
+.wa-fab{position:fixed;bottom:2rem;right:2rem;z-index:990;width:52px;height:52px;background:#25D366;display:flex;align-items:center;justify-content:center;clip-path:polygon(8px 0%,100% 0%,100% calc(100% - 8px),calc(100% - 8px) 100%,0% 100%,0% 8px);box-shadow:0 4px 24px rgba(37,211,102,.4);text-decoration:none;transition:all .25s}.wa-fab:hover{transform:scale(1.08)}.wa-fab svg{width:26px;height:26px;fill:#fff}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav-logo" href="/">BRIWAX</a>
+  <button class="burger" id="burger"><span></span><span></span><span></span></button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="/" style="color:var(--white)">Inicio</a></li>
+    <li class="dropdown">
+      <a href="#">Catalogos &#9662;</a>
+      <div class="dropdown-menu">
+        <% categories.forEach(function(cat){ %>
+          <a href="/catalogo/<%= cat.slug %>"><%= cat.name %></a>
+        <% }); %>
+      </div>
+    </li>
+    <% var heroWa = (sections.hero && sections.hero.extra_data && sections.hero.extra_data.whatsapp) ? sections.hero.extra_data.whatsapp : '5511962769557'; %>
+    <li><a href="https://wa.me/<%= heroWa %>" target="_blank" class="nav-cta">Contato</a></li>
+  </ul>
+</nav>
+
+<%
+/* ================================================================
+   HERO — sempre fixo no topo, antes das demais seções ordenadas
+================================================================= */
+var heroSec = sections.hero || {};
+var ftSec   = sections.footer || {};
+%>
+
+<section class="hero" id="inicio">
+  <canvas id="beamCanvas"></canvas>
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-brand">BRIWAX</div>
+      <div class="hero-tagline">
+        <% if(heroSec.extra_data && heroSec.extra_data.eyebrow){ %><%= heroSec.extra_data.eyebrow %><br/><% } %>
+        <% if(heroSec.subtitle){ %><%= heroSec.subtitle %><% } else { %>Solucoes inovadoras e parcerias que movem o atacado.<% } %>
+      </div>
+      <div class="hero-socials">
+        <% if(ftSec.extra_data && ftSec.extra_data.instagram){ %><a href="<%= ftSec.extra_data.instagram %>" target="_blank" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a><% } %>
+        <% if(ftSec.extra_data && ftSec.extra_data.facebook){ %><a href="<%= ftSec.extra_data.facebook %>" target="_blank" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a><% } %>
+        <% if(ftSec.extra_data && ftSec.extra_data.linkedin){ %><a href="<%= ftSec.extra_data.linkedin %>" target="_blank" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a><% } %>
+      </div>
+    </div>
+    <div class="hero-right">
+      <% categories.forEach(function(cat){ %>
+      <a href="/catalogo/<%= cat.slug %>" class="hero-nav-item"><%= cat.name %></a>
+      <% }); %>
+      <a href="#contato" class="hero-nav-item" style="color:rgba(255,255,255,.5)">Fale Conosco</a>
+    </div>
+  </div>
+  <div class="led-strip"></div>
+</section>
+
+<div class="ticker"><div class="ticker-inner">
+  <div class="ticker-item"><span>BEAM 14R</span> &#8212; Moving Head Profissional</div>
+  <div class="ticker-item"><span>BEAM 18R</span> &#8212; Com Borda</div>
+  <div class="ticker-item"><span>PAR LED BATERIA</span> &#8212; 12 LED Sem Fio</div>
+  <div class="ticker-item"><span>DMX 512</span> &#8212; Compativel</div>
+  <div class="ticker-item"><span>ATACADO</span> &#8212; Para Locadores e Revendedores</div>
+  <div class="ticker-item"><span>21 ANOS</span> &#8212; De Experiencia</div>
+  <div class="ticker-item"><span>ILUMINACAO PROFISSIONAL</span> &#8212; Eventos e Shows</div>
+  <div class="ticker-item"><span>BEAM 14R</span> &#8212; Moving Head Profissional</div>
+  <div class="ticker-item"><span>BEAM 18R</span> &#8212; Com Borda</div>
+  <div class="ticker-item"><span>PAR LED BATERIA</span> &#8212; 12 LED Sem Fio</div>
+  <div class="ticker-item"><span>DMX 512</span> &#8212; Compativel</div>
+  <div class="ticker-item"><span>ATACADO</span> &#8212; Para Locadores e Revendedores</div>
+  <div class="ticker-item"><span>21 ANOS</span> &#8212; De Experiencia</div>
+  <div class="ticker-item"><span>ILUMINACAO PROFISSIONAL</span> &#8212; Eventos e Shows</div>
+</div></div>
+
+<%
+/* ================================================================
+   LOOP DINÂMICO — itera sectionsOrdered (ordem salva no banco)
+   Cada seção é renderizada pelo seu section_key.
+   Hero e footer são excluídos aqui (hero já renderizado acima,
+   footer renderizado abaixo após o loop).
+================================================================= */
+var fp       = featuredProducts || [];
+var fpFirst  = fp.length > 0 ? fp[0] : null;
+var fpMiddle = fp.length > 2 ? fp.slice(1, fp.length - 1) : [];
+var fpLast   = fp.length > 1 ? fp[fp.length - 1] : null;
+
+var skippedKeys = ['hero', 'footer'];
+
+sectionsOrdered.forEach(function(sec) {
+  var key = sec.section_key;
+  if(skippedKeys.indexOf(key) > -1) return; // hero e footer fora do loop
+  if(sec.is_visible === false) return;       // seções ocultas não renderizam
+%>
+
+  <% if(key === 'feature_blue' && fpFirst){ %>
+  <!-- FEATURE BLUE — 1o produto em destaque -->
+  <section class="feature-blue reveal" id="produtos">
+    <div class="reveal-l">
+      <span class="eyebrow" style="color:rgba(255,255,255,.6)">Destaque da Linha</span>
+      <h2 class="big-title"><%= fpFirst.sku %></h2>
+      <p class="sub"><%= fpFirst.name %></p>
+      <a href="/produto/<%= fpFirst.slug %>" class="btn-white-outline">
+        Ver Produto
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+    <div class="product-img reveal-r">
+      <% if(fpFirst.cover_image){ %><img src="<%= fpFirst.cover_image %>" alt="<%= fpFirst.name %>"/><% } else { %><div style="width:280px;height:280px;display:flex;align-items:center;justify-content:center;opacity:.15"><svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div><% } %>
+    </div>
+  </section>
+  <% } %>
+
+  <% if(key === 'featured_products' && fpMiddle && fpMiddle.length > 0){ %>
+  <!-- CARDS SECTION — produtos do meio -->
+  <section class="cards-section">
+    <div class="reveal">
+      <span class="eyebrow"><%= sec.subtitle || 'Linha de Produtos' %></span>
+      <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,4vw,3rem);letter-spacing:.04em;color:var(--text-dark)"><%= sec.title || 'Moving Heads' %></h2>
+    </div>
+    <div class="cards-grid">
+      <% fpMiddle.forEach(function(p){ %>
+      <a href="/produto/<%= p.slug %>" class="prod-card reveal">
+        <div class="card-info">
+          <div class="card-badge"><%= p.sku %></div>
+          <div class="card-name"><%= p.name %></div>
+          <% if(p.short_desc){ %><div class="card-desc"><%= p.short_desc %></div><% } %>
+          <span class="card-link">Ver Produto</span>
+        </div>
+        <% if(p.cover_image){ %><div class="card-img"><img src="<%= p.cover_image %>" alt="<%= p.name %>"/></div><% } else { %><div class="card-img-placeholder"><svg viewBox="0 0 64 64"><rect x="8" y="8" width="48" height="48" rx="4"/><circle cx="32" cy="28" r="8"/><path d="M16 52c0-8.837 7.163-16 16-16s16 7.163 16 16"/></svg></div><% } %>
+      </a>
+      <% }); %>
+    </div>
+  </section>
+  <% } %>
+
+  <% if(key === 'feature_dark' && fpLast){ %>
+  <!-- FEATURE DARK — ultimo produto em destaque -->
+  <section class="feature-dark reveal">
+    <div class="product-img reveal-l" style="position:relative;z-index:1">
+      <% if(fpLast.cover_image){ %><img src="<%= fpLast.cover_image %>" alt="<%= fpLast.name %>" style="max-height:340px"/><% } else { %><div style="width:280px;height:280px;display:flex;align-items:center;justify-content:center;opacity:.15"><svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div><% } %>
+    </div>
+    <div style="position:relative;z-index:1" class="reveal-r">
+      <span class="eyebrow" style="color:rgba(255,255,255,.55)">Sem Fio</span>
+      <h2 class="big-title"><%= fpLast.sku %></h2>
+      <p class="sub"><%= fpLast.name %></p>
+      <a href="/produto/<%= fpLast.slug %>" class="btn-white-outline">
+        Ver Produto
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </section>
+  <% } %>
+
+  <% if(key === 'about'){ %>
+  <!-- QUEM SOMOS — dados do banco -->
+  <%
+    var aboutSec    = sec;
+    var circleNum   = (aboutSec.extra_data && aboutSec.extra_data.circle_num) ? aboutSec.extra_data.circle_num : '21';
+    var circleLbl   = (aboutSec.extra_data && aboutSec.extra_data.circle_lbl) ? aboutSec.extra_data.circle_lbl : 'Anos de Mercado';
+    var aboutTitle  = aboutSec.title    || 'Quem Somos';
+    var aboutP1     = aboutSec.body     || 'Somos a Briwax, uma exportadora sediada em Zhejiang, China, especializada em fornecer uma ampla gama de produtos inovadores para o mercado atacadista brasileiro.';
+    var aboutP2     = (aboutSec.extra_data && aboutSec.extra_data.body2) ? aboutSec.extra_data.body2 : '';
+    var rawTags     = (aboutSec.extra_data && aboutSec.extra_data.tags) ? aboutSec.extra_data.tags : 'Iluminacao Profissional, Automotivo, Tecnologia, Atacado, Exportadora';
+    var aboutTags   = rawTags.split(',').map(function(t){ return t.trim(); }).filter(Boolean);
+  %>
+  <section class="about-section" id="quem-somos">
+    <div class="about-deco reveal-l">
+      <div class="about-ring"></div>
+      <div class="about-circle">
+        <div class="about-circle-num"><%= circleNum %></div>
+        <div class="about-circle-lbl"><%= circleLbl %></div>
+      </div>
+    </div>
+    <div class="about-text reveal-r">
+      <span class="eyebrow"><%= aboutSec.subtitle || 'Sobre a Briwax' %></span>
+      <h2><%= aboutTitle %></h2>
+      <p><%= aboutP1 %></p>
+      <% if(aboutP2){ %><p><%- aboutP2 %></p><% } %>
+      <div class="about-tags">
+        <% aboutTags.forEach(function(tag){ %><span class="about-tag"><%= tag %></span><% }); %>
+      </div>
+    </div>
+  </section>
+  <% } %>
+
+  <% if(key === 'categories' && categories && categories.length > 0){ %>
+  <!-- CATEGORIAS -->
+  <section class="cats-section" id="catalogos">
+    <div class="reveal">
+      <span class="eyebrow"><%= sec.subtitle || 'Nossos Catalogos' %></span>
+      <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,4vw,3rem);letter-spacing:.04em;color:var(--text-dark)"><%= sec.title || 'Segmentos de Atuacao' %></h2>
+    </div>
+    <div class="cats-grid">
+      <% categories.forEach(function(cat, i){ %>
+      <div class="cat-card reveal">
+        <div class="cat-icon"><% if(cat.icon_svg){ %><%- cat.icon_svg %><% } else { %><svg viewBox="0 0 24 24"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg><% } %></div>
+        <div class="cat-num">// 0<%= i+1 %></div>
+        <div class="cat-name"><%= cat.name %></div>
+        <div class="cat-desc"><%= cat.description || '' %></div>
+        <a href="/catalogo/<%= cat.slug %>" class="cat-link">Ver Catalogo</a>
+      </div>
+      <% }); %>
+    </div>
+  </section>
+  <% } %>
+
+  <% if(key === 'contact'){ %>
+  <!-- CONTATO -->
+  <% var waNum = (sec.extra_data && sec.extra_data.whatsapp) ? sec.extra_data.whatsapp : '5511962769557'; %>
+  <section class="contact-section reveal" id="contato">
+    <span class="eyebrow" style="color:rgba(255,255,255,.55);display:block;margin-bottom:.5rem"><%= sec.subtitle || 'Fale Conosco' %></span>
+    <h2><%= sec.title || 'Vamos fazer negocio?' %></h2>
+    <p><%= sec.body || 'Entre em contato com nossa equipe e solicite seu acesso ao catalogo completo' %></p>
+    <div class="contact-btns">
+      <a href="https://wa.me/<%= waNum %>" target="_blank" class="btn-white-outline">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        WhatsApp
+      </a>
+      <% if(sec.cta_url){ %><a href="<%= sec.cta_url %>" target="_blank" class="btn-white-outline"><%= sec.cta_label || 'Ver Todos os Catalogos' %></a><% } %>
+    </div>
+  </section>
+  <% } %>
+
+<% }); /* fim forEach sectionsOrdered */ %>
+
+<!-- FOOTER — sempre fixo no final -->
+<% var footerSec = sections.footer || {}; %>
+<footer>
+  <div class="footer-logo">BRIWAX</div>
+  <div class="footer-tagline"><%= footerSec.subtitle || 'Solucoes Inovadoras e Parcerias que Movem o Atacado.' %><br/><%= (footerSec.extra_data && footerSec.extra_data.location) ? footerSec.extra_data.location : 'Zhejiang, China &middot; Mercado Atacadista Brasileiro' %></div>
+  <div class="footer-socials">
+    <% if(footerSec.extra_data && footerSec.extra_data.instagram){ %><a href="<%= footerSec.extra_data.instagram %>" target="_blank" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a><% } %>
+    <% if(footerSec.extra_data && footerSec.extra_data.facebook){ %><a href="<%= footerSec.extra_data.facebook %>" target="_blank" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a><% } %>
+    <% if(footerSec.extra_data && footerSec.extra_data.linkedin){ %><a href="<%= footerSec.extra_data.linkedin %>" target="_blank" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a><% } %>
+    <% if(footerSec.extra_data && footerSec.extra_data.whatsapp){ %><a href="<%= footerSec.extra_data.whatsapp %>" target="_blank" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a><% } %>
+  </div>
+</footer>
+<div class="footer-bottom"><%= (footerSec.extra_data && footerSec.extra_data.copyright) ? footerSec.extra_data.copyright : '&#169; 2025 BRIWAX &#183; TODOS OS DIREITOS RESERVADOS &#183; ZHEJIANG, CHINA' %></div>
+
+<a href="https://wa.me/<%= heroWa %>" class="wa-fab" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
+
+<%- marketingBody %>
+<script>
+var bC=document.getElementById('beamCanvas'),bCtx=bC.getContext('2d'),bW,bH;
+function resB(){bW=bC.width=bC.offsetWidth;bH=bC.height=bC.offsetHeight}resB();window.addEventListener('resize',resB);
+var beams=[{x:.08,a:-.22,c:'rgba(59,130,246,',s:.004,p:0},{x:.92,a:.22,c:'rgba(35,82,232,',s:.005,p:1.3},{x:.3,a:-.1,c:'rgba(96,165,250,',s:.003,p:2.5},{x:.7,a:.1,c:'rgba(255,255,255,',s:.004,p:.9},{x:.5,a:0,c:'rgba(59,130,246,',s:.003,p:3.1}],bT=0;
+(function drawB(){bCtx.clearRect(0,0,bW,bH);bT+=.016;beams.forEach(function(b){var a=b.a+Math.sin(bT*b.s*60+b.p)*.2;var ox=b.x*bW,oy=bH,len=bH*1.5,ex=ox+Math.sin(a)*len,ey=oy-Math.cos(a)*len,nx=-Math.sin(a),ny=-Math.cos(a);var g=bCtx.createLinearGradient(ox,oy,ex,ey);g.addColorStop(0,b.c+'0)');g.addColorStop(.1,b.c+'.3)');g.addColorStop(.5,b.c+'.1)');g.addColorStop(1,b.c+'0)');bCtx.beginPath();bCtx.moveTo(ox+nx*4,oy+ny*4);bCtx.lineTo(ex+nx*160,ey+ny*160);bCtx.lineTo(ex-nx*160,ey-ny*160);bCtx.lineTo(ox-nx*4,oy-ny*4);bCtx.closePath();bCtx.fillStyle=g;bCtx.fill();});requestAnimationFrame(drawB);})();
+var burger=document.getElementById('burger'),nav=document.getElementById('navLinks');
+burger.addEventListener('click',function(){nav.classList.toggle('open')});
+nav.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){nav.classList.remove('open')})});
+var io=new IntersectionObserver(function(e){e.forEach(function(v){if(v.isIntersecting)v.target.classList.add('visible')})},{threshold:.1});
+document.querySelectorAll('.reveal,.reveal-l,.reveal-r').forEach(function(el){io.observe(el)});
+</script>
+</body>
+</html>

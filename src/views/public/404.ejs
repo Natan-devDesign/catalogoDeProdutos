@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Página não encontrada · BRIWAX</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@600&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--blue-deep:#071470;--blue-mid:#1135b8;--blue-bright:#2352e8;--white:#fff;--text-muted:#5a6fa8}
+body{font-family:'Rajdhani',sans-serif;background:var(--blue-deep);color:var(--white);min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1.2rem;padding:2rem;text-align:center;overflow:hidden;position:relative}
+body::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 30% 50%,rgba(35,82,232,.2) 0%,transparent 70%),radial-gradient(ellipse 40% 60% at 70% 40%,rgba(17,53,184,.18) 0%,transparent 70%);pointer-events:none}
+body::after{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:48px 48px;pointer-events:none}
+.num{font-family:'Bebas Neue',sans-serif;font-size:clamp(7rem,20vw,14rem);letter-spacing:.04em;line-height:1;color:var(--white);position:relative;z-index:1}
+.num span{color:var(--blue-bright)}
+.label{font-family:'Share Tech Mono',monospace;font-size:.7rem;letter-spacing:.28em;color:rgba(255,255,255,.35);text-transform:uppercase;position:relative;z-index:1}
+.msg{font-size:1.05rem;letter-spacing:.06em;color:rgba(255,255,255,.55);max-width:420px;line-height:1.7;position:relative;z-index:1}
+.actions{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center;position:relative;z-index:1;margin-top:.5rem}
+.btn{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.76rem;letter-spacing:.18em;text-transform:uppercase;padding:.7rem 1.8rem;text-decoration:none;transition:all .25s;clip-path:polygon(6px 0%,100% 0%,100% calc(100% - 6px),calc(100% - 6px) 100%,0% 100%,0% 6px)}
+.btn-solid{background:var(--blue-mid);border:1.5px solid var(--blue-mid);color:var(--white)}
+.btn-solid:hover{background:var(--blue-bright);border-color:var(--blue-bright)}
+.btn-outline{border:1.5px solid rgba(255,255,255,.3);color:rgba(255,255,255,.7)}
+.btn-outline:hover{border-color:var(--white);color:var(--white)}
+</style>
+</head>
+<body>
+<div class="num">4<span>0</span>4</div>
+<div class="label">// Página não encontrada</div>
+<p class="msg">A página que você procura não existe ou foi removida.</p>
+<div class="actions">
+  <a href="/" class="btn btn-solid">← Voltar ao Início</a>
+  <a href="javascript:history.back()" class="btn btn-outline">Página Anterior</a>
+</div>
+</body>
+</html>

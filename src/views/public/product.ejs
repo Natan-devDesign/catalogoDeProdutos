@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title><%= title %></title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<%- marketingHead %>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--blue-deep:#071470;--blue-mid:#1135b8;--blue-bright:#2352e8;--blue-light:#3b82f6;--white:#ffffff;--off-white:#f0f5ff;--gray:#e8eef8;--text-dark:#0d1a5c;--text-muted:#5a6fa8;--border-blue:rgba(35,82,232,.14);--surface:#f7f9ff}
+html{scroll-behavior:smooth}
+body{font-family:'Rajdhani',sans-serif;background:var(--white);color:var(--text-dark);overflow-x:hidden}
+/* NAVBAR */
+.nav{position:fixed;top:0;left:0;width:100%;z-index:1000;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 5%;background:var(--blue-deep);box-shadow:0 2px 24px rgba(7,20,112,.4)}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;letter-spacing:.2em;color:var(--white);text-decoration:none}
+.nav-links{display:flex;align-items:center;gap:2rem;list-style:none}
+.nav-links a{font-weight:600;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.75);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--white)}
+.dropdown{position:relative}
+.dropdown-menu{display:none;position:absolute;top:100%;left:0;background:var(--blue-deep);min-width:220px;border-top:2px solid var(--blue-bright);box-shadow:0 12px 32px rgba(7,20,112,.5)}
+.dropdown:hover .dropdown-menu{display:block}
+.dropdown-menu a{display:block;padding:.65rem 1.2rem;border-bottom:1px solid rgba(255,255,255,.07);font-size:.76rem}
+.dropdown-menu a:hover{background:rgba(255,255,255,.06)}
+.nav-cta{font-weight:700;font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;padding:.5rem 1.4rem;border:1.5px solid rgba(255,255,255,.5);color:var(--white)!important;text-decoration:none;transition:all .25s;border-radius:2px}
+.nav-cta:hover{background:var(--white);color:var(--blue-deep)!important}
+.burger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none}
+.burger span{display:block;width:22px;height:1.5px;background:var(--white);transition:all .3s}
+@media(max-width:860px){.burger{display:flex}.nav-links{position:fixed;top:64px;left:0;width:100%;background:var(--blue-deep);flex-direction:column;align-items:flex-start;gap:0;padding:1rem 0;transform:translateY(-120%);transition:transform .35s ease;box-shadow:0 8px 32px rgba(7,20,112,.5)}.nav-links.open{transform:translateY(0)}.nav-links li{width:100%}.nav-links a{display:block;padding:.85rem 6%;font-size:.9rem}.nav-cta{display:none}.dropdown-menu{position:static;background:rgba(0,0,0,.15);border-top:none;border-left:2px solid var(--blue-bright);margin-left:1.5rem;box-shadow:none}}
+/* BREADCRUMB BAR */
+.breadcrumb-bar{margin-top:64px;background:var(--off-white);border-bottom:1px solid var(--border-blue);padding:.75rem 6%;display:flex;align-items:center;gap:.5rem;font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.18em;color:var(--text-muted)}
+.breadcrumb-bar a{color:var(--text-muted);text-decoration:none;transition:color .2s}
+.breadcrumb-bar a:hover{color:var(--blue-mid)}
+.breadcrumb-bar span{color:rgba(35,82,232,.3)}
+.breadcrumb-bar .current{color:var(--blue-mid)}
+/* MAIN PRODUCT LAYOUT */
+.product-main{padding:3.5rem 6% 5rem;display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;max-width:1280px;margin:0 auto}
+@media(max-width:900px){.product-main{grid-template-columns:1fr;gap:3rem;padding:2.5rem 5% 4rem}}
+/* CAROUSEL */
+.carousel{position:relative;user-select:none}
+.carousel-track-wrap{overflow:hidden;background:var(--surface);border:1px solid var(--border-blue);position:relative}
+.carousel-track{display:flex;transition:transform .55s cubic-bezier(.16,1,.3,1)}
+.carousel-slide{flex:0 0 100%;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;padding:2rem}
+.carousel-slide img{max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 8px 32px rgba(7,20,112,.12));transition:transform .6s cubic-bezier(.16,1,.3,1)}
+.carousel-track-wrap:hover .carousel-slide img{transform:scale(1.04)}
+.carousel-btn{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;background:var(--white);border:1.5px solid var(--border-blue);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;transition:all .22s;clip-path:polygon(4px 0%,100% 0%,100% calc(100% - 4px),calc(100% - 4px) 100%,0% 100%,0% 4px)}
+.carousel-btn:hover{background:var(--blue-mid);border-color:var(--blue-mid)}
+.carousel-btn:hover svg{stroke:var(--white)}
+.carousel-btn svg{width:18px;height:18px;stroke:var(--blue-mid);fill:none;stroke-width:2;transition:stroke .22s}
+.carousel-btn.prev{left:.9rem}
+.carousel-btn.next{right:.9rem}
+.carousel-btn:disabled{opacity:.3;cursor:not-allowed}
+.carousel-dots{display:flex;justify-content:center;gap:.55rem;margin-top:1rem}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--gray);border:none;cursor:pointer;transition:all .25s;padding:0}
+.dot.active{background:var(--blue-mid);transform:scale(1.2)}
+/* THUMBNAILS */
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:.6rem;margin-top:.75rem}
+.thumb{aspect-ratio:1;overflow:hidden;border:1.5px solid var(--border-blue);cursor:pointer;background:var(--surface);transition:border-color .22s;padding:4px}
+.thumb img{width:100%;height:100%;object-fit:contain}
+.thumb.active{border-color:var(--blue-mid)}
+.thumb:hover{border-color:var(--blue-bright)}
+/* PRODUCT INFO */
+.product-info{position:sticky;top:84px;display:flex;flex-direction:column;gap:1.2rem}
+.product-category{font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.22em;color:var(--blue-bright)}
+.product-sku{font-family:'Share Tech Mono',monospace;font-size:.75rem;letter-spacing:.18em;color:var(--text-muted);margin-top:.2rem}
+.product-name{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,5vw,3.2rem);letter-spacing:.04em;line-height:1;color:var(--text-dark)}
+.product-desc{font-size:.95rem;line-height:1.75;letter-spacing:.04em;color:var(--text-muted)}
+/* SPECS TABLE */
+.specs-block{border:1px solid var(--border-blue);overflow:hidden}
+.specs-header{background:var(--blue-deep);padding:.65rem 1rem;font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:.22em;color:rgba(255,255,255,.6);text-transform:uppercase}
+.specs-table{width:100%;border-collapse:collapse}
+.specs-table tr{border-bottom:1px solid var(--border-blue)}
+.specs-table tr:last-child{border-bottom:none}
+.specs-table td{padding:.65rem 1rem;font-size:.88rem;letter-spacing:.04em}
+.specs-table td:first-child{font-family:'Share Tech Mono',monospace;font-size:.68rem;letter-spacing:.14em;color:var(--text-muted);width:42%;border-right:1px solid var(--border-blue);background:var(--off-white)}
+.specs-table td:last-child{color:var(--text-dark);font-weight:600}
+/* TAGS */
+.product-tags{display:flex;flex-wrap:wrap;gap:.5rem}
+.product-tag{font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;padding:.3rem .7rem;background:var(--off-white);border:1px solid var(--border-blue);color:var(--blue-mid)}
+/* DOWNLOADS */
+.downloads-block{display:flex;flex-direction:column;gap:.5rem}
+.dl-btn{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border:1.5px solid var(--border-blue);color:var(--text-dark);text-decoration:none;transition:all .22s;font-weight:600;font-size:.82rem;letter-spacing:.06em}
+.dl-btn:hover{border-color:var(--blue-mid);color:var(--blue-mid);background:rgba(17,53,184,.04)}
+.dl-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0}
+.dl-btn .dl-icon{width:32px;height:32px;background:var(--blue-mid);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dl-btn .dl-icon svg{stroke:var(--white)}
+/* CTA BLOCK */
+.cta-block{background:var(--blue-deep);padding:1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.cta-block-text strong{display:block;font-size:1rem;letter-spacing:.08em;color:var(--white)}
+.cta-block-text p{font-size:.8rem;color:rgba(255,255,255,.55);margin-top:.2rem;letter-spacing:.04em}
+.cta-wa{display:inline-flex;align-items:center;gap:.6rem;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;padding:.7rem 1.6rem;background:#25D366;color:var(--white);text-decoration:none;clip-path:polygon(6px 0%,100% 0%,100% calc(100% - 6px),calc(100% - 6px) 100%,0% 100%,0% 6px);transition:all .25s}
+.cta-wa:hover{background:#22c55e;box-shadow:0 4px 24px rgba(37,211,102,.4)}
+.cta-wa svg{width:18px;height:18px;fill:var(--white);flex-shrink:0}
+/* RELATED */
+.related{padding:5rem 6%;background:var(--off-white)}
+.related-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:2.5rem;flex-wrap:wrap;gap:1rem}
+.related-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,4vw,3rem);letter-spacing:.04em;color:var(--text-dark)}
+.related-link{font-weight:700;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--blue-mid);text-decoration:none;display:flex;align-items:center;gap:.3rem}
+.related-link::after{content:'→'}
+.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem}
+.rel-card{display:flex;flex-direction:column;background:var(--white);border:1px solid var(--border-blue);text-decoration:none;color:inherit;transition:transform .3s,box-shadow .3s,border-color .3s;position:relative;overflow:hidden}
+.rel-card::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:3px;background:var(--blue-mid);transform:scaleX(0);transform-origin:left;transition:transform .35s}
+.rel-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(7,20,112,.1);border-color:rgba(35,82,232,.3)}
+.rel-card:hover::after{transform:scaleX(1)}
+.rel-img{aspect-ratio:1;overflow:hidden;background:var(--off-white);display:flex;align-items:center;justify-content:center;padding:1rem}
+.rel-img img{width:90%;height:90%;object-fit:contain;transition:transform .4s}
+.rel-card:hover .rel-img img{transform:scale(1.06)}
+.rel-body{padding:1rem 1.1rem 1.2rem;flex:1;display:flex;flex-direction:column;gap:.3rem}
+.rel-badge{font-family:'Share Tech Mono',monospace;font-size:.58rem;letter-spacing:.2em;color:var(--blue-bright)}
+.rel-name{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.04em;line-height:1.15;color:var(--text-dark);flex:1}
+.rel-cta{font-weight:700;font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;color:var(--blue-mid);margin-top:.4rem;display:flex;align-items:center;gap:.25rem}
+.rel-cta::after{content:'→'}
+/* FOOTER */
+footer{background:var(--blue-deep);padding:3rem 6%;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:2rem}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.2em;color:var(--white)}
+.footer-mid{text-align:center;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.3);line-height:1.8}
+.footer-socials{display:flex;gap:.8rem;justify-content:flex-end}
+.footer-socials a{width:34px;height:34px;border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;text-decoration:none;transition:all .25s;clip-path:polygon(4px 0%,100% 0%,100% calc(100% - 4px),calc(100% - 4px) 100%,0% 100%,0% 4px)}
+.footer-socials a:hover{background:rgba(255,255,255,.1)}
+.footer-socials svg{width:13px;height:13px;fill:rgba(255,255,255,.6)}
+.footer-socials a:hover svg{fill:var(--white)}
+.footer-bottom{background:rgba(0,0,0,.25);text-align:center;padding:.9rem 6%;font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.14em;color:rgba(255,255,255,.2)}
+@media(max-width:680px){footer{grid-template-columns:1fr;text-align:center}.footer-socials{justify-content:center}}
+.wa-fab{position:fixed;bottom:2rem;right:2rem;z-index:990;width:50px;height:50px;background:#25D366;display:flex;align-items:center;justify-content:center;clip-path:polygon(8px 0%,100% 0%,100% calc(100% - 8px),calc(100% - 8px) 100%,0% 100%,0% 8px);box-shadow:0 4px 24px rgba(37,211,102,.4);text-decoration:none;transition:all .25s}
+.wa-fab:hover{transform:scale(1.08)}
+.wa-fab svg{width:24px;height:24px;fill:#fff}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="nav">
+  <a class="nav-logo" href="/">BRIWAX</a>
+  <button class="burger" id="burger"><span></span><span></span><span></span></button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="/">Início</a></li>
+    <li class="dropdown">
+      <a href="#">Catálogos ▾</a>
+      <div class="dropdown-menu">
+        <% if (typeof categories !== 'undefined') { categories.forEach(cat => { %>
+        <a href="/catalogo/<%= cat.slug %>"><%= cat.name %></a>
+        <% }) } else { %>
+        <a href="/catalogo/iluminacao-profissional">Iluminação Profissional</a>
+        <% } %>
+      </div>
+    </li>
+    <li><a href="https://wa.me/5511962769557" target="_blank" class="nav-cta">Contato</a></li>
+  </ul>
+</nav>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb-bar">
+  <a href="/">Início</a>
+  <span>/</span>
+  <% if (product.category_slug) { %>
+  <a href="/catalogo/<%= product.category_slug %>"><%= product.category_name || 'Catálogo' %></a>
+  <span>/</span>
+  <% } %>
+  <span class="current"><%= product.sku %></span>
+</div>
+
+<!-- PRODUCT MAIN -->
+<div class="product-main">
+
+  <!-- ── COLUNA ESQUERDA: CAROUSEL ── -->
+  <div class="carousel" id="carousel">
+    <div class="carousel-track-wrap">
+      <div class="carousel-track" id="track">
+        <% if (product.images && product.images.length > 0) { %>
+          <% product.images.forEach(img => { %>
+          <div class="carousel-slide">
+            <img src="<%= img.url %>"
+                 alt="<%= img.alt_text || product.name %>"
+                 loading="lazy"/>
+          </div>
+          <% }) %>
+        <% } else { %>
+        <!-- Placeholder se não há imagens -->
+        <div class="carousel-slide" style="background:var(--surface)">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:1rem;opacity:.2">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--blue-mid)" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span style="font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.2em;color:var(--text-muted)">SEM IMAGEM</span>
+          </div>
+        </div>
+        <% } %>
+      </div>
+      <% if (product.images && product.images.length > 1) { %>
+      <button class="carousel-btn prev" id="prevBtn" aria-label="Anterior">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="carousel-btn next" id="nextBtn" aria-label="Próxima">
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <% } %>
+    </div>
+
+    <% if (product.images && product.images.length > 1) { %>
+    <!-- DOTS -->
+    <div class="carousel-dots">
+      <% product.images.forEach((_, i) => { %>
+      <button class="dot <%= i === 0 ? 'active' : '' %>" data-idx="<%= i %>" aria-label="Imagem <%= i + 1 %>"></button>
+      <% }) %>
+    </div>
+    <!-- THUMBNAILS -->
+    <div class="thumbs">
+      <% product.images.forEach((img, i) => { %>
+      <div class="thumb <%= i === 0 ? 'active' : '' %>" data-idx="<%= i %>">
+        <img src="<%= img.url %>" alt="<%= img.alt_text || product.name + ' ' + (i+1) %>" loading="lazy"/>
+      </div>
+      <% }) %>
+    </div>
+    <% } %>
+  </div>
+
+  <!-- ── COLUNA DIREITA: INFO ── -->
+  <div class="product-info">
+    <% if (product.category_name) { %>
+    <div class="product-category"><%= product.category_name %></div>
+    <% } %>
+    <div class="product-sku">// <%= product.sku %></div>
+    <h1 class="product-name"><%= product.name %></h1>
+
+    <% if (product.description || product.short_desc) { %>
+    <p class="product-desc"><%- product.description || product.short_desc %></p>
+    <% } %>
+
+    <!-- TAGS -->
+    <% if (product.tags && product.tags.length) { %>
+    <div class="product-tags">
+      <% product.tags.forEach(tag => { %>
+      <span class="product-tag"><%= tag.replace(/-/g,' ') %></span>
+      <% }) %>
+    </div>
+    <% } %>
+
+    <!-- ESPECIFICAÇÕES TÉCNICAS -->
+    <% if (product.specs && Object.keys(product.specs).length > 0) { %>
+    <div class="specs-block">
+      <div class="specs-header">// Especificações Técnicas</div>
+      <table class="specs-table">
+        <% Object.entries(product.specs).forEach(([key, val]) => { %>
+        <% if (key && val) { %>
+        <tr>
+          <td><%= key %></td>
+          <td><%= val %></td>
+        </tr>
+        <% } %>
+        <% }) %>
+      </table>
+    </div>
+    <% } %>
+
+    <!-- DOWNLOADS -->
+    <% if (product.downloads && product.downloads.length > 0) { %>
+    <div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:.22em;color:var(--text-muted);margin-bottom:.6rem">// DOWNLOADS</div>
+      <div class="downloads-block">
+        <% product.downloads.forEach(dl => { %>
+        <a href="<%= dl.url %>" target="_blank" download class="dl-btn">
+          <div class="dl-icon">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </div>
+          <%= dl.label %>
+        </a>
+        <% }) %>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- CTA WHATSAPP -->
+    <div class="cta-block">
+      <div class="cta-block-text">
+        <strong>Tem interesse neste produto?</strong>
+        <p>Fale com nosso time e solicite condições de atacado</p>
+      </div>
+      <a href="https://wa.me/5511962769557?text=<%= encodeURIComponent('Olá! Tenho interesse no produto ' + product.sku + ' – ' + product.name + '.') %>"
+         target="_blank" class="cta-wa">
+        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Solicitar via WhatsApp
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUTOS RELACIONADOS -->
+<% if (typeof relatedProducts !== 'undefined' && relatedProducts && relatedProducts.length > 0) { %>
+<section class="related">
+  <div class="related-header">
+    <div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.22em;color:var(--text-muted);margin-bottom:.4rem">// OUTROS PRODUTOS</div>
+      <h2 class="related-title">Veja Também</h2>
+    </div>
+    <% if (product.category_slug) { %>
+    <a href="/catalogo/<%= product.category_slug %>" class="related-link">Ver catálogo completo</a>
+    <% } %>
+  </div>
+  <div class="related-grid">
+    <% relatedProducts.forEach(rp => { %>
+    <a href="/produto/<%= rp.slug %>" class="rel-card">
+      <div class="rel-img">
+        <% if (rp.cover_image) { %>
+        <img src="<%= rp.cover_image %>" alt="<%= rp.name %>"/>
+        <% } else { %>
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(35,82,232,.15)" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <% } %>
+      </div>
+      <div class="rel-body">
+        <div class="rel-badge"><%= rp.sku %></div>
+        <div class="rel-name"><%= rp.name %></div>
+        <div class="rel-cta">Ver produto</div>
+      </div>
+    </a>
+    <% }) %>
+  </div>
+</section>
+<% } %>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">BRIWAX</div>
+  <div class="footer-mid">Soluções Inovadoras e Parcerias que Movem o Atacado.<br/>Zhejiang, China · Mercado Atacadista Brasileiro</div>
+  <div class="footer-socials">
+    <a href="https://www.instagram.com/briwax_oficial" target="_blank" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+    <a href="https://www.facebook.com/profile.php?id=61566373353292" target="_blank" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+    <a href="https://www.linkedin.com/company/briwax-oficial/" target="_blank" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+    <a href="https://wa.me/5511962769557" target="_blank" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
+  </div>
+</footer>
+<div class="footer-bottom">© <%= currentYear %> BRIWAX · TODOS OS DIREITOS RESERVADOS · ZHEJIANG, CHINA</div>
+
+<a href="https://wa.me/5511962769557?text=<%= encodeURIComponent('Olá! Tenho interesse no produto ' + product.sku + '.') %>"
+   class="wa-fab" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+<%- marketingBody %>
+
+<script>
+/* ── NAVBAR ── */
+const burger=document.getElementById('burger'),navLinks=document.getElementById('navLinks');
+burger.addEventListener('click',()=>navLinks.classList.toggle('open'));
+navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>navLinks.classList.remove('open')));
+
+/* ── CAROUSEL ── */
+const track   = document.getElementById('track');
+if (track) {
+  const slides  = track.querySelectorAll('.carousel-slide');
+  const dots    = document.querySelectorAll('.dot');
+  const thumbs  = document.querySelectorAll('.thumb');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const total   = slides.length;
+  let current   = 0;
+  let autoTimer;
+
+  function goTo(idx, animate = true) {
+    if (!animate) track.style.transition = 'none';
+    current = (idx + total) % total;
+    track.style.transform = `translateX(-${current * 100}%)`;
+    if (!animate) requestAnimationFrame(() => { track.style.transition = ''; });
+    dots.forEach((d, i)   => d.classList.toggle('active', i === current));
+    thumbs.forEach((t, i) => t.classList.toggle('active', i === current));
+  }
+
+  prevBtn?.addEventListener('click', () => { goTo(current - 1); resetAuto(); });
+  nextBtn?.addEventListener('click', () => { goTo(current + 1); resetAuto(); });
+  dots.forEach(d   => d.addEventListener('click',  () => { goTo(+d.dataset.idx);  resetAuto(); }));
+  thumbs.forEach(t => t.addEventListener('click',  () => { goTo(+t.dataset.idx);  resetAuto(); }));
+
+  function startAuto() { if (total > 1) autoTimer = setInterval(() => goTo(current + 1), 3800); }
+  function resetAuto() { clearInterval(autoTimer); startAuto(); }
+  startAuto();
+
+  /* swipe */
+  let touchStartX = 0;
+  track.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  track.addEventListener('touchend',   e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 40) { goTo(dx < 0 ? current + 1 : current - 1); resetAuto(); }
+  });
+}
+</script>
+</body>
+</html>

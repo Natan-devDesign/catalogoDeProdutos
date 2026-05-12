@@ -1,0 +1,310 @@
+<%
+/* admin/products/create.ejs  (reutilizado para edição com product definido)
+   Vars: categories[], product? (undefined = novo), flash?
+*/
+const isEdit = typeof product !== 'undefined' && product;
+pageTitle   = isEdit ? 'Editar Produto' : 'Novo Produto';
+currentPage = isEdit ? 'products' : 'product-new';
+breadcrumb  = isEdit ? `// PRODUTOS / ${product.sku}` : '// PRODUTOS / NOVO';
+
+%>
+<%- include('../../layouts/dashboard', { body: `
+
+<form action="${isEdit ? '/admin/produtos/' + product.id : '/admin/produtos/novo'}" method="POST" enctype="multipart/form-data" id="productForm">
+  ${isEdit ? '<input type="hidden" name="_method" value="PUT"/>' : ''}
+
+  <!-- ── INFORMAÇÕES BÁSICAS ── -->
+  <div class="form-section">
+    <div class="form-section-title">Informações Básicas</div>
+    <div class="form-grid">
+      <div class="form-group span2">
+        <label>Nome do Produto <span class="req">*</span></label>
+        <input type="text" name="name" required
+               value="${isEdit ? product.name : ''}"
+               placeholder="Ex: Lâmpada de Pedreiro Quatro em Um"
+               oninput="generateSlug(this.value)"/>
+      </div>
+      <div class="form-group">
+        <label>SKU / Código <span class="req">*</span></label>
+        <input type="text" name="sku" required
+               value="${isEdit ? product.sku : ''}"
+               placeholder="Ex: BRY-432-1"
+               style="font-family:'Share Tech Mono',monospace"/>
+      </div>
+      <div class="form-group">
+        <label>Categoria</label>
+        <select name="category_id">
+          <option value="">Sem categoria</option>
+          ${categories.map(c =>
+            `<option value="${c.id}" ${isEdit && product.category_id == c.id ? 'selected' : ''}>${c.name}</option>`
+          ).join('')}
+        </select>
+      </div>
+      <div class="form-group span2">
+        <label>URL Amigável (Slug) <span class="req">*</span></label>
+        <input type="text" name="slug" id="slugInput" required
+               value="${isEdit ? product.slug : ''}"
+               placeholder="lampada-pedreiro-quatro-em-um"
+               style="font-family:'Share Tech Mono',monospace"/>
+        <span class="form-hint">Gerado automaticamente. Evite alterar após publicar.</span>
+      </div>
+      <div class="form-group span2">
+        <label>Descrição Curta</label>
+        <input type="text" name="short_desc" maxlength="400"
+               value="${isEdit ? (product.short_desc || '') : ''}"
+               placeholder="Resumo exibido nos cards do catálogo (máx. 400 caracteres)"/>
+      </div>
+      <div class="form-group span2">
+        <label>Descrição Completa</label>
+        <textarea name="description" rows="6" placeholder="Descrição detalhada do produto. HTML básico permitido.">${isEdit ? (product.description || '') : ''}</textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ESPECIFICAÇÕES TÉCNICAS ── -->
+  <div class="form-section">
+    <div class="form-section-title">Especificações Técnicas</div>
+    <div id="specsContainer">
+      <!-- Specs dinâmicas preenchidas via JS -->
+    </div>
+    <button type="button" class="btn btn-outline" onclick="addSpec()" style="margin-top:.75rem">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Adicionar Especificação
+    </button>
+    <input type="hidden" name="specs" id="specsHidden" value='${isEdit ? JSON.stringify(product.specs || {}) : "{}"}'/>
+    <p class="form-hint" style="margin-top:.5rem">Ex: Potência, Voltagem, Cor, Peso, Dimensões...</p>
+  </div>
+
+  <!-- ── TAGS ── -->
+  <div class="form-section">
+    <div class="form-section-title">Tags de Busca e Filtro</div>
+    <div class="form-group">
+      <label>Tags</label>
+      <input type="text" name="tags_raw" id="tagsInput"
+             value="${isEdit && product.tags ? product.tags.join(', ') : ''}"
+             placeholder="led, moving-head, beam, 200w — separadas por vírgula"/>
+      <span class="form-hint">Tags são usadas na busca e nos filtros do catálogo.</span>
+    </div>
+  </div>
+
+  <!-- ── IMAGENS ── -->
+  <div class="form-section">
+    <div class="form-section-title">Imagens do Produto</div>
+    <p class="form-hint" style="margin-bottom:.75rem">A primeira imagem marcada como capa será exibida nos cards do catálogo. Arraste para reordenar.</p>
+    ${isEdit && product.images && product.images.length ? `
+    <div class="image-preview-grid" id="existingImages">
+      ${product.images.map(img => `
+        <div class="image-thumb" data-img-id="${img.id}">
+          <img src="${img.url}" alt="${img.alt_text || ''}">
+          ${img.is_cover ? '<div class="cover-badge">CAPA</div>' : ''}
+          <button type="button" class="remove-img" onclick="removeExistingImage(${img.id}, this)">×</button>
+          <input type="hidden" name="existing_images[]" value="${img.id}"/>
+        </div>
+      `).join('')}
+    </div>
+    ` : ''}
+    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('imageInput').click()">
+      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <p>Clique ou arraste imagens aqui</p>
+      <p style="margin-top:.3rem;font-size:.75rem"><strong>JPG, PNG, WebP</strong> · Máx. 10MB por arquivo</p>
+    </div>
+    <input type="file" id="imageInput" name="imagens" multiple accept="image/*" style="display:none" onchange="previewImages(this.files)"/>
+    <div class="image-preview-grid" id="newImagePreview"></div>
+  </div>
+
+  <!-- ── DOWNLOADS ── -->
+  <div class="form-section">
+    <div class="form-section-title">Arquivos para Download</div>
+    <div id="downloadsContainer">
+      ${isEdit && product.downloads ? product.downloads.map((dl, i) => `
+        <div class="form-grid" style="margin-bottom:.75rem;padding:.8rem;background:var(--off-white);border:1px solid var(--border-blue)" data-download-row>
+          <div class="form-group">
+            <label>Rótulo</label>
+            <input type="text" name="dl_label[]" value="${dl.label}" placeholder="Ex: Ficha Técnica PDF"/>
+          </div>
+          <div class="form-group">
+            <label>URL do Arquivo</label>
+            <input type="url" name="dl_url[]" value="${dl.url}" placeholder="https://..."/>
+          </div>
+          <div class="form-group" style="align-self:flex-end">
+            <button type="button" class="btn btn-danger" onclick="this.closest('[data-download-row]').remove()">Remover</button>
+          </div>
+        </div>
+      `).join('') : ''}
+    </div>
+    <button type="button" class="btn btn-outline" onclick="addDownload()">
+      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Adicionar Arquivo
+    </button>
+  </div>
+
+  <!-- ── STATUS ── -->
+  <div class="form-section">
+    <div class="form-section-title">Publicação</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Status</label>
+        <div class="toggle-wrap" style="margin-top:.3rem">
+          <label class="toggle">
+            <input type="checkbox" name="is_active" value="1" ${!isEdit || product.is_active ? 'checked' : ''}/>
+            <div class="toggle-track"></div>
+          </label>
+          <span class="toggle-label">Produto ativo (visível no catálogo)</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Ordem de Exibição</label>
+        <input type="number" name="sort_order" min="0"
+               value="${isEdit ? product.sort_order : 0}"
+               placeholder="0"/>
+        <span class="form-hint">Menor número = aparece primeiro</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <a href="/admin/produtos" class="btn btn-outline">← Cancelar</a>
+    <button type="submit" class="btn btn-primary">
+      <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      ${isEdit ? 'Salvar Alterações' : 'Publicar Produto'}
+    </button>
+  </div>
+</form>
+
+<script>
+/* ── SLUG GENERATOR ── */
+let rout = "${isEdit ? '/admin/produtos/' + product.id : '/admin/produtos/novo'}";
+function generateSlug(name) {
+  const slug = name.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9\s-]/g,'').trim()
+    .replace(/\s+/g,'-').replace(/-+/g,'-');
+  document.getElementById('slugInput').value = slug;
+}
+
+/* ── SPECS ── */
+let specsData = {};
+try { specsData = JSON.parse(document.getElementById('specsHidden').value || '{}'); } catch(e){}
+
+async function enviarDadosUrlEncoded(id) {
+  // 1. Cria os dados no formato URL Encoded
+  const dados = new FormData();
+  
+  dados.append('delete_images[]', id);
+  alert(id);
+
+  try {
+    const resposta = await fetch(rout, {
+      method: 'POST',
+      // Não precisa do JSON.stringify! Passamos o objeto direto no body
+      body: dados 
+      // O fetch adiciona o header 'Content-Type': 'application/x-www-form-urlencoded' automaticamente
+    });
+
+    if (resposta.ok) {
+      console.log("Enviado com sucesso!");
+    }
+  } catch (erro) {
+    console.error("Erro:", erro);
+  }
+}
+function renderSpecs() {
+  const c = document.getElementById('specsContainer');
+  c.innerHTML = Object.entries(specsData).map(([k,v], i) => \`
+    <div class="form-grid" style="margin-bottom:.6rem" data-spec-row>
+      <div class="form-group">
+        <label>Atributo</label>
+        <input type="text" value="\${k}" onchange="updateSpec(\${i},this.value,null)" placeholder="Ex: Potência"/>
+      </div>
+      <div class="form-group" style="display:flex;align-items:flex-end;gap:.5rem">
+        <div style="flex:1">
+          <label>Valor</label>
+          <input type="text" value="\${v}" onchange="updateSpec(\${i},null,this.value)" placeholder="Ex: 50W"/>
+        </div>
+        <button type="button" class="btn-icon danger" style="margin-bottom:1px" onclick="removeSpec(\${i})">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+  \`).join('');
+}
+
+function addSpec() {
+  specsData[''] = '';
+  renderSpecs();
+  syncSpecs();
+}
+function removeSpec(i) {
+  const keys = Object.keys(specsData);
+  delete specsData[keys[i]];
+  renderSpecs(); syncSpecs();
+}
+function updateSpec(i, newKey, newVal) {
+  const entries = Object.entries(specsData);
+  if (newKey !== null) { entries[i][0] = newKey; }
+  if (newVal !== null) { entries[i][1] = newVal; }
+  specsData = Object.fromEntries(entries);
+  syncSpecs();
+}
+function syncSpecs() {
+  document.getElementById('specsHidden').value = JSON.stringify(specsData);
+}
+renderSpecs();
+
+/* ── IMAGE PREVIEW ── */
+function previewImages(files) {
+  const preview = document.getElementById('newImagePreview');
+  Array.from(files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const div = document.createElement('div');
+      div.className = 'image-thumb';
+      div.innerHTML = \`<img src="\${e.target.result}" alt="\${file.name}">\`;
+      preview.appendChild(div);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+/* ── DRAG OVER UPLOAD ZONE ── */
+const zone = document.getElementById('uploadZone');
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+zone.addEventListener('drop', e => {
+  e.preventDefault(); zone.classList.remove('drag-over');
+  document.getElementById('imageInput').files = e.dataTransfer.files;
+  previewImages(e.dataTransfer.files);
+});
+
+/* ── REMOVE EXISTING IMAGE ── */
+function removeExistingImage(imgId, btn, R) {
+  if (!confirm('Remover esta imagem?')) return;
+  btn.closest('.image-thumb').remove();
+  
+enviarDadosUrlEncoded(imgId);
+}
+
+/* ── ADD DOWNLOAD ROW ── */
+function addDownload() {
+  const c = document.getElementById('downloadsContainer');
+  const div = document.createElement('div');
+  div.setAttribute('data-download-row','');
+  div.className='form-grid';
+  div.style.cssText='margin-bottom:.75rem;padding:.8rem;background:var(--off-white);border:1px solid var(--border-blue)';
+  div.innerHTML=\`
+    <div class="form-group">
+      <label>Rótulo</label>
+      <input type="text" name="dl_label[]" placeholder="Ex: Ficha Técnica PDF"/>
+    </div>
+    <div class="form-group">
+      <label>URL do Arquivo</label>
+      <input type="url" name="dl_url[]" placeholder="https://..."/>
+    </div>
+    <div class="form-group" style="align-self:flex-end">
+      <button type="button" class="btn btn-danger" onclick="this.closest('[data-download-row]').remove()">Remover</button>
+    </div>
+  \`;
+  c.appendChild(div);
+}
+</script>
+` }) %>

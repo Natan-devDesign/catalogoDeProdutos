@@ -1,0 +1,96 @@
+//EDITAR linhas: create.ejs no finalzinho:
+
+try { specsData = JSON.parse(document.getElementById('specsHidden').value || '{}'); } catch(e){}
+
+async function enviarDadosUrlEncoded(id) {
+  // 1. Cria os dados no formato URL Encoded
+  const dados = new FormData();
+  
+  dados.append('delete_images[]', id);
+  alert(id);
+
+  try {
+    const resposta = await fetch(rout, {
+      method: 'POST',
+      // Não precisa do JSON.stringify! Passamos o objeto direto no body
+      body: dados 
+      // O fetch adiciona o header 'Content-Type': 'application/x-www-form-urlencoded' automaticamente
+    });
+
+    if (resposta.ok) {
+      console.log("Enviado com sucesso!");
+    }
+  } catch (erro) {
+    console.error("Erro:", erro);
+  }
+}
+
+// TROCAR: 
+/* ── REMOVE EXISTING IMAGE ── */
+function removeExistingImage(imgId, btn, R) {
+  if (!confirm('Remover esta imagem?')) return;
+  btn.closest('.image-thumb').remove();
+  
+enviarDadosUrlEncoded(imgId);
+}
+
+
+// edição para o CREATE do product.Controller
+exports.create = async (req, res, next) => {
+  try {
+    const data = _parseBody(req.body);
+
+    if (!data.name || !data.sku) {
+      const categories = await CategoryModel.findAll();
+      return res.render('admin/products/create', {
+        pageTitle: 'Novo Produto', currentPage: 'product-new',
+        breadcrumb: '// PRODUTOS / NOVO',
+        user: req.user, flash: { type: 'error', message: 'Nome e SKU são obrigatórios.' },
+        categories, product: undefined,
+      });
+    }
+
+    if (await Product.isSkuTaken(data.sku)) {
+      const categories = await CategoryModel.findAll();
+      return res.render('admin/products/create', {
+        pageTitle: 'Novo Produto', currentPage: 'product-new',
+        breadcrumb: '// PRODUTOS / NOVO',
+        user: req.user, flash: { type: 'error', message: `SKU "${data.sku}" já cadastrado.` },
+        categories, product: undefined,
+      });
+    }
+
+    const product = await Product.create({ ...data, createdBy: req.user.id });
+
+    if (req.files?.length) {
+      for (let i = 0; i < req.files.length; i++) {
+        await Product.addImage(product.id, {
+          url:       `/uploads/products/${req.files[i].filename}`,
+          altText:   product.name,
+          sortOrder: i,
+          isCover:   i === 0,
+        });
+      }
+    }
+
+    await _syncDownloads(product.id, req.body);
+    await AuditLogModel.log({
+      userId: req.user.id, action: 'product.create',
+      entityType: 'product', entityId: product.id,
+      newValue: { sku: product.sku, name: product.name },
+      ipAddress: req.ip,
+    });
+    res.redirect('/admin/produtos?success=created');
+  } catch (err) {
+    console.error('[product.create]', err);
+    next(err);
+  }
+};
+
+
+// ADICIONAR listener no server.js
+require('./listener');
+
+//CORRIGIR BOTÃO DE DELETE NOVO
+VIEW admin PRODUCT INDEX
+ <form action="/admin/produtos/${p.id}/excluir" method="POST"

@@ -1,0 +1,130 @@
+<%
+pageTitle   = 'Usuários';
+currentPage = 'users';
+breadcrumb  = '// CONFIG / USUÁRIOS';
+%>
+<%- include('../layouts/dashboard', { body: `
+
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:.75rem">
+  <p style="font-size:.85rem;color:var(--text-muted)">
+    Gerencie os usuários com acesso ao painel administrativo.
+  </p>
+  <button class="btn btn-primary" onclick="document.getElementById('newUserModal').classList.add('open')">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    Novo Usuário
+  </button>
+</div>
+
+<div class="table-wrap">
+  <div class="table-header">
+    <div class="table-title">Usuários do Sistema</div>
+  </div>
+  <div style="overflow-x:auto">
+    <table>
+      <thead><tr>
+        <th>USUÁRIO</th><th>ROLE</th><th>STATUS</th>
+        <th>ÚLTIMO LOGIN</th><th>CRIADO EM</th><th style="text-align:right">AÇÕES</th>
+      </tr></thead>
+      <tbody>
+        ${users.map(u => `
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:.75rem">
+                <div style="width:34px;height:34px;border-radius:50%;background:var(--blue-mid);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1rem;color:#fff;flex-shrink:0">
+                  ${u.name.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <div style="font-weight:700;font-size:.88rem">${u.name}</div>
+                  <div style="font-size:.72rem;color:var(--text-muted)">${u.email}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="badge ${u.role === 'admin' ? 'badge-admin' : 'badge-editor'}">
+                ${u.role === 'admin' ? '⬡ ADMIN' : '◈ EDITOR'}
+              </span>
+            </td>
+            <td>
+              <span class="badge ${u.is_active ? 'badge-active' : 'badge-inactive'}">
+                ${u.is_active ? '● ATIVO' : '○ INATIVO'}
+              </span>
+            </td>
+            <td style="font-family:'Share Tech Mono',monospace;font-size:.65rem;color:var(--text-muted)">
+              ${u.last_login ? new Date(u.last_login).toLocaleString('pt-BR', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—'}
+            </td>
+            <td style="font-family:'Share Tech Mono',monospace;font-size:.65rem;color:var(--text-muted)">
+              ${new Date(u.created_at).toLocaleDateString('pt-BR')}
+            </td>
+            <td>
+              <div class="td-actions">
+                <a href="/admin/usuarios/${u.id}/senha" class="btn-icon" title="Alterar senha" style="text-decoration:none"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></a>
+                ${u.id !== user.id ? `
+                  <form action="/admin/usuarios/${u.id}/toggle" method="POST"
+                        onsubmit="return confirm('${u.is_active ? 'Desativar' : 'Reativar'} este usuário?')">
+                    <button type="submit" class="btn-icon" title="${u.is_active ? 'Desativar' : 'Reativar'}">
+                      ${u.is_active
+                        ? '<svg viewBox="0 0 24 24"><path d="M18.36 6.64a9 9 0 11-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>'
+                        : '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>'
+                      }
+                    </button>
+                  </form>
+                ` : '<span style="font-size:.65rem;color:var(--text-muted);font-family:\'Share Tech Mono\',monospace">VOCÊ</span>'}
+              </div>
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MODAL NOVO USUÁRIO -->
+<div class="modal-overlay" id="newUserModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Criar Novo Usuário</div>
+      <button class="modal-close" onclick="document.getElementById('newUserModal').classList.remove('open')">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <form action="/admin/usuarios" method="POST">
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nome Completo <span class="req">*</span></label>
+            <input type="text" name="name" required placeholder="Ex: João Silva"/>
+          </div>
+          <div class="form-group">
+            <label>E-mail <span class="req">*</span></label>
+            <input type="email" name="email" required placeholder="joao@briwax.com.br"/>
+          </div>
+          <div class="form-group">
+            <label>Senha <span class="req">*</span></label>
+            <input type="password" name="password" required minlength="8" placeholder="Mín. 8 caracteres"/>
+          </div>
+          <div class="form-group">
+            <label>Nível de Acesso</label>
+            <select name="role">
+              <option value="editor">Editor — Produtos e Home</option>
+              <option value="admin">Admin — Acesso Total</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:1rem;padding:.8rem 1rem;background:rgba(217,119,6,.08);border:1px solid rgba(217,119,6,.2);font-size:.78rem;color:var(--warning);letter-spacing:.04em">
+          ⚠ O usuário deverá alterar a senha no primeiro acesso.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('newUserModal').classList.remove('open')">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Criar Usuário</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+document.getElementById('newUserModal').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('open');
+});
+</script>
+` }) %>

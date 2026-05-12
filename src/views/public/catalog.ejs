@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title><%= title %></title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<%- marketingHead %>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--blue-deep:#071470;--blue-mid:#1135b8;--blue-bright:#2352e8;--blue-light:#3b82f6;--blue-glow:#60a5fa;--white:#fff;--off-white:#f0f5ff;--gray:#e8eef8;--text-dark:#0d1a5c;--text-muted:#5a6fa8;--border:rgba(255,255,255,.18);--border-blue:rgba(35,82,232,.15)}
+html{scroll-behavior:smooth}body{font-family:'Rajdhani',sans-serif;background:var(--white);color:var(--text-dark);overflow-x:hidden}
+.nav{position:fixed;top:0;left:0;width:100%;z-index:1000;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 5%;background:var(--blue-deep);box-shadow:0 2px 24px rgba(7,20,112,.4)}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;letter-spacing:.2em;color:var(--white);text-decoration:none}
+.nav-links{display:flex;align-items:center;gap:2rem;list-style:none}
+.nav-links a{font-weight:600;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.75);text-decoration:none;transition:color .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--white)}
+.dropdown{position:relative}.dropdown-menu{display:none;position:absolute;top:100%;left:0;background:var(--blue-deep);min-width:220px;border-top:2px solid var(--blue-bright);box-shadow:0 12px 32px rgba(7,20,112,.5)}.dropdown:hover .dropdown-menu{display:block}.dropdown-menu a{display:block;padding:.65rem 1.2rem;border-bottom:1px solid rgba(255,255,255,.07);font-size:.76rem}.dropdown-menu a:hover{background:rgba(255,255,255,.06)}
+.nav-cta{font-weight:700;font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;padding:.5rem 1.4rem;border:1.5px solid rgba(255,255,255,.5);color:var(--white)!important;text-decoration:none;transition:all .25s;border-radius:2px}.nav-cta:hover{background:var(--white);color:var(--blue-deep)!important}
+.burger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none}.burger span{display:block;width:22px;height:1.5px;background:var(--white);transition:all .3s}
+@media(max-width:860px){.burger{display:flex}.nav-links{position:fixed;top:64px;left:0;width:100%;background:var(--blue-deep);flex-direction:column;align-items:flex-start;gap:0;padding:1rem 0;transform:translateY(-120%);transition:transform .35s ease;box-shadow:0 8px 32px rgba(7,20,112,.5)}.nav-links.open{transform:translateY(0)}.nav-links li{width:100%}.nav-links a{display:block;padding:.85rem 6%;font-size:.9rem}.nav-cta{display:none}.dropdown-menu{position:static;box-shadow:none;background:rgba(0,0,0,.15);border-top:none;border-left:2px solid var(--blue-bright);margin-left:1.5rem}}
+.page-hero{margin-top:64px;background:linear-gradient(140deg,#040e55 0%,#0a1a80 50%,#0d1d8a 100%);position:relative;overflow:hidden;padding:5rem 6% 4rem;display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;flex-wrap:wrap}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;opacity:.6}
+.led-strip{position:absolute;bottom:0;left:0;width:100%;height:14px;background:repeating-linear-gradient(90deg,#ff003c 0,#ff003c 10px,#ff7700 10px,#ff7700 20px,#ffe000 20px,#ffe000 30px,#00ff88 30px,#00ff88 40px,#00cfff 40px,#00cfff 50px,#8800ff 50px,#8800ff 60px);opacity:.6}
+.page-hero-text{position:relative;z-index:2}
+.breadcrumb{font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.2em;color:rgba(255,255,255,.45);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}.breadcrumb a{color:rgba(255,255,255,.45);text-decoration:none;transition:color .2s}.breadcrumb a:hover{color:rgba(255,255,255,.8)}.breadcrumb span{color:rgba(255,255,255,.25)}
+.page-hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.8rem,7vw,5.5rem);letter-spacing:.04em;line-height:.9;color:var(--white)}
+.page-hero h1 span{color:rgba(255,255,255,.35);-webkit-text-stroke:1px rgba(255,255,255,.4)}
+.page-hero-meta{position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-end;gap:.5rem}
+.product-count{font-family:'Bebas Neue',sans-serif;font-size:3.5rem;letter-spacing:.05em;color:rgba(255,255,255,.15);line-height:1}
+.product-count-lbl{font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.2em;color:rgba(255,255,255,.4)}
+@media(max-width:600px){.page-hero{padding:4rem 6% 3.5rem}.page-hero-meta{display:none}}
+.ticker{background:var(--blue-mid);padding:0;overflow:hidden;border-top:1px solid rgba(255,255,255,.1);border-bottom:1px solid rgba(255,255,255,.1)}.ticker-inner{display:flex;gap:0;width:max-content;animation:tickerRun 28s linear infinite;font-family:'Share Tech Mono',monospace;font-size:.68rem;letter-spacing:.2em;color:rgba(255,255,255,.55)}.ticker-item{padding:.7rem 2.5rem;white-space:nowrap;border-right:1px solid rgba(255,255,255,.1)}.ticker-item b{color:rgba(255,255,255,.9)}
+@keyframes tickerRun{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.toolbar{background:var(--white);border-bottom:1px solid var(--border-blue);padding:1.5rem 6%;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;position:sticky;top:64px;z-index:100;box-shadow:0 2px 16px rgba(7,20,112,.06)}
+.search-wrap{flex:1;min-width:240px;max-width:480px;position:relative}
+.search-wrap input{width:100%;font-family:'Rajdhani',sans-serif;font-size:.92rem;font-weight:500;letter-spacing:.06em;background:var(--off-white);border:1.5px solid var(--border-blue);color:var(--text-dark);padding:.7rem 1rem .7rem 2.8rem;outline:none;transition:border-color .25s,box-shadow .25s;clip-path:polygon(6px 0%,100% 0%,100% calc(100% - 6px),calc(100% - 6px) 100%,0% 100%,0% 6px)}
+.search-wrap input::placeholder{color:var(--text-muted)}.search-wrap input:focus{border-color:var(--blue-bright);box-shadow:0 0 0 3px rgba(35,82,232,.1)}
+.search-icon{position:absolute;left:.85rem;top:50%;transform:translateY(-50%);pointer-events:none}.search-icon svg{width:16px;height:16px;stroke:var(--text-muted);fill:none;stroke-width:2}.search-wrap:focus-within .search-icon svg{stroke:var(--blue-bright)}
+.clear-btn{position:absolute;right:.7rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;display:none;color:var(--text-muted);padding:2px;transition:color .2s}.clear-btn:hover{color:var(--blue-mid)}.clear-btn.visible{display:flex;align-items:center}.clear-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.filter-tabs{display:flex;gap:.5rem;flex-wrap:wrap}
+.filter-btn{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;padding:.5rem 1.1rem;border:1.5px solid var(--border-blue);background:transparent;color:var(--text-muted);cursor:pointer;transition:all .22s;clip-path:polygon(5px 0%,100% 0%,100% calc(100% - 5px),calc(100% - 5px) 100%,0% 100%,0% 5px)}.filter-btn:hover{border-color:var(--blue-bright);color:var(--blue-bright)}.filter-btn.active{background:var(--blue-mid);border-color:var(--blue-mid);color:var(--white)}
+.results-info{margin-left:auto;font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.15em;color:var(--text-muted);white-space:nowrap}.results-info b{color:var(--blue-mid)}
+.catalog{padding:3.5rem 6% 6rem;background:var(--off-white)}
+.no-results{grid-column:1/-1;text-align:center;padding:5rem 2rem;display:none}.no-results.visible{display:block}
+.no-results svg{width:56px;height:56px;stroke:var(--text-muted);fill:none;stroke-width:1.5;margin-bottom:1.2rem;opacity:.4}
+.no-results h3{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.06em;color:var(--text-muted);margin-bottom:.5rem}.no-results p{font-size:.88rem;color:var(--text-muted);letter-spacing:.06em}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.5rem}
+
+/* === CARD — FIEL AO ORIGINAL === */
+.card{background:var(--white);border:1px solid var(--border-blue);display:flex;flex-direction:column;position:relative;overflow:hidden;transition:transform .32s cubic-bezier(.16,1,.3,1),box-shadow .32s,border-color .32s;animation:cardIn .5s ease both;text-decoration:none;color:inherit}
+.card.hidden{display:none}
+@keyframes cardIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.card::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:3px;background:var(--blue-mid);transform:scaleX(0);transform-origin:left;transition:transform .35s ease}
+.card:hover{transform:translateY(-5px);box-shadow:0 16px 48px rgba(7,20,112,.12);border-color:rgba(35,82,232,.3)}.card:hover::after{transform:scaleX(1)}
+/* Imagem no topo ocupando toda a largura */
+.card-img-wrap{width:100%;aspect-ratio:1/1;overflow:hidden;background:var(--off-white);display:flex;align-items:center;justify-content:center;position:relative}
+.card-img-wrap img{width:85%;height:85%;object-fit:contain;transition:transform .5s cubic-bezier(.16,1,.3,1);filter:drop-shadow(0 8px 24px rgba(7,20,112,.1))}
+.card:hover .card-img-wrap img{transform:scale(1.08)}
+.card-img-placeholder{width:80%;height:80%;display:flex;align-items:center;justify-content:center}.card-img-placeholder svg{width:64px;height:64px;stroke:rgba(35,82,232,.2);fill:none;stroke-width:1}
+/* Info na parte de baixo do mesmo card */
+.card-body{padding:1.4rem 1.4rem 1.6rem;display:flex;flex-direction:column;flex:1}
+.card-badge{font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:.22em;color:var(--blue-bright);margin-bottom:.4rem}
+.card-name{font-family:'Bebas Neue',sans-serif;font-size:1.45rem;letter-spacing:.03em;line-height:1.15;color:var(--text-dark);margin-bottom:.5rem;flex:1}
+.card-tag{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;padding:.25rem .55rem;margin-bottom:1rem;background:var(--off-white);border:1px solid var(--border-blue);color:var(--text-muted)}
+.card-cta{display:flex;align-items:center;justify-content:space-between;padding-top:.9rem;border-top:1px solid var(--border-blue);margin-top:auto}
+.card-link{font-weight:700;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--blue-mid);display:inline-flex;align-items:center;gap:.3rem;transition:gap .2s,color .2s}.card-link::after{content:'\2192'}.card:hover .card-link{gap:.55rem;color:var(--blue-deep)}
+.wa-btn{width:32px;height:32px;background:#25D366;display:flex;align-items:center;justify-content:center;text-decoration:none;clip-path:polygon(4px 0%,100% 0%,100% calc(100% - 4px),calc(100% - 4px) 100%,0% 100%,0% 4px);transition:transform .2s,box-shadow .2s;flex-shrink:0}.wa-btn:hover{transform:scale(1.1);box-shadow:0 4px 16px rgba(37,211,102,.4)}.wa-btn svg{width:15px;height:15px;fill:#fff}
+
+.pagination-wrap{text-align:center;margin-top:3rem;display:flex;align-items:center;justify-content:center;gap:.4rem}
+.page-btn{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;padding:.6rem 1.2rem;border:1.5px solid var(--border-blue);color:var(--text-muted);background:transparent;cursor:pointer;text-decoration:none;transition:all .22s;clip-path:polygon(5px 0%,100% 0%,100% calc(100% - 5px),calc(100% - 5px) 100%,0% 100%,0% 5px)}.page-btn:hover,.page-btn.active{border-color:var(--blue-mid);color:var(--blue-mid);background:rgba(17,53,184,.06)}
+footer{background:var(--blue-deep);padding:3rem 6%;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:2rem}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.2em;color:var(--white)}.footer-mid{text-align:center;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.3);line-height:1.8}
+.footer-socials{display:flex;gap:.8rem;justify-content:flex-end}.footer-socials a{width:34px;height:34px;border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;text-decoration:none;transition:all .25s;clip-path:polygon(4px 0%,100% 0%,100% calc(100% - 4px),calc(100% - 4px) 100%,0% 100%,0% 4px)}.footer-socials a:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.4)}.footer-socials svg{width:13px;height:13px;fill:rgba(255,255,255,.6)}.footer-socials a:hover svg{fill:var(--white)}
+.footer-bottom{background:rgba(0,0,0,.25);text-align:center;padding:.9rem 6%;font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.14em;color:rgba(255,255,255,.2)}
+@media(max-width:680px){footer{grid-template-columns:1fr;text-align:center}.footer-socials{justify-content:center}}
+.wa-fab{position:fixed;bottom:2rem;right:2rem;z-index:990;width:50px;height:50px;background:#25D366;display:flex;align-items:center;justify-content:center;clip-path:polygon(8px 0%,100% 0%,100% calc(100% - 8px),calc(100% - 8px) 100%,0% 100%,0% 8px);box-shadow:0 4px 24px rgba(37,211,102,.4);text-decoration:none;transition:all .25s}.wa-fab:hover{transform:scale(1.08)}.wa-fab svg{width:24px;height:24px;fill:#fff}
+</style>
+</head>
+<body data-category-slug="<%= category.slug %>">
+
+<nav class="nav">
+  <a class="nav-logo" href="/">BRIWAX</a>
+  <button class="burger" id="burger"><span></span><span></span><span></span></button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="/">Inicio</a></li>
+    <li class="dropdown">
+      <a href="#" class="active">Catalogos &#9662;</a>
+      <div class="dropdown-menu">
+        <% categories.forEach(function(cat){ %>
+        <a href="/catalogo/<%= cat.slug %>" class="<%= cat.slug === category.slug ? 'active' : '' %>"><%= cat.name %></a>
+        <% }); %>
+      </div>
+    </li>
+    <li><a href="https://wa.me/5511962769557" target="_blank" class="nav-cta">Contato</a></li>
+  </ul>
+</nav>
+
+<section class="page-hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="page-hero-text">
+    <div class="breadcrumb">
+      <a href="/">Inicio</a><span>/</span>
+      <a href="#">Catalogos</a><span>/</span>
+      <%= category.name %>
+    </div>
+    <h1>Catalogo<br/><span><%= category.name.split(' ')[0] %></span><br/><%= category.name.split(' ').slice(1).join(' ') %></h1>
+  </div>
+  <div class="page-hero-meta">
+    <div class="product-count" id="heroCount"><%= total %></div>
+    <div class="product-count-lbl">Produtos Disponiveis</div>
+  </div>
+  <div class="led-strip"></div>
+</section>
+
+<div class="ticker"><div class="ticker-inner">
+  <div class="ticker-item"><b><%= category.name.toUpperCase() %></b> &mdash; Catalogo Completo</div>
+  <div class="ticker-item"><b>BRIWAX</b> &mdash; Solucoes Inovadoras</div>
+  <div class="ticker-item"><b>ATACADO</b> &mdash; Parcerias Estrategicas</div>
+  <div class="ticker-item"><b>QUALIDADE</b> &mdash; Zhejiang, China</div>
+  <div class="ticker-item"><b>DMX 512</b> &mdash; Compativel</div>
+  <div class="ticker-item"><b>IP65</b> &mdash; Outdoor</div>
+  <div class="ticker-item"><b><%= category.name.toUpperCase() %></b> &mdash; Catalogo Completo</div>
+  <div class="ticker-item"><b>BRIWAX</b> &mdash; Solucoes Inovadoras</div>
+  <div class="ticker-item"><b>ATACADO</b> &mdash; Parcerias Estrategicas</div>
+  <div class="ticker-item"><b>QUALIDADE</b> &mdash; Zhejiang, China</div>
+  <div class="ticker-item"><b>DMX 512</b> &mdash; Compativel</div>
+  <div class="ticker-item"><b>IP65</b> &mdash; Outdoor</div>
+</div></div>
+
+<div class="toolbar">
+  <div class="search-wrap">
+    <span class="search-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></span>
+    <input type="text" id="searchInput" placeholder="Pesquisar produto..." autocomplete="off" value="<%= q || '' %>"/>
+    <button class="clear-btn" id="clearBtn" aria-label="Limpar"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  </div>
+  <div class="filter-tabs">
+    <button class="filter-btn <%= (!filtro || filtro === 'todos') ? 'active' : '' %>" data-filter="todos">Todos</button>
+    <%
+      var allTags = [];
+      products.forEach(function(p){ if(p.tags){ p.tags.forEach(function(t){ if(allTags.indexOf(t)===-1) allTags.push(t); }); } });
+      allTags = allTags.slice(0,8);
+      allTags.forEach(function(tag){
+    %>
+    <button class="filter-btn <%= filtro === tag ? 'active' : '' %>" data-filter="<%= tag %>"><%= tag.replace(/-/g,' ') %></button>
+    <% }); %>
+  </div>
+  <div class="results-info"><b id="resultsCount"><%= total %></b> produto(s)</div>
+</div>
+
+<section class="catalog">
+  <div class="grid" id="productGrid">
+    <div class="no-results" id="noResults" style="<%= products.length === 0 ? 'display:block' : '' %>">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <h3>Nenhum produto encontrado</h3>
+      <p>Tente outro termo ou limpe o filtro</p>
+    </div>
+    <% products.forEach(function(p, i){ %>
+    <a href="/produto/<%= p.slug %>" class="card" style="animation-delay:<%= i * 0.04 %>s">
+      <div class="card-img-wrap">
+        <% if(p.cover_image){ %>
+        <img src="<%= p.cover_image %>" alt="<%= p.name %>" loading="lazy"/>
+        <% } else { %>
+        <div class="card-img-placeholder">
+          <svg viewBox="0 0 64 64"><rect x="8" y="8" width="48" height="48" rx="4"/><circle cx="32" cy="28" r="8"/><path d="M16 52c0-8.837 7.163-16 16-16s16 7.163 16 16"/></svg>
+        </div>
+        <% } %>
+      </div>
+      <div class="card-body">
+        <div class="card-badge"><%= p.sku %></div>
+        <div class="card-name"><%= p.name %></div>
+        <% if(p.tags && p.tags.length){ %><span class="card-tag"><%= p.tags[0].replace(/-/g,' ') %></span><% } %>
+        <div class="card-cta">
+          <span class="card-link">Ver Mais</span>
+          <a href="https://wa.me/5511962769557?text=<%= encodeURIComponent('Ola! Tenho interesse no produto ' + p.sku + ' ' + p.name + '.') %>"
+             target="_blank" class="wa-btn" aria-label="WhatsApp" onclick="event.stopPropagation()">
+            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </a>
+        </div>
+      </div>
+    </a>
+    <% }); %>
+  </div>
+
+  <% if(totalPages > 1){ %>
+  <div class="pagination-wrap" id="pagination">
+    <% if(page > 1){ %><a href="?q=<%= q %>&filtro=<%= filtro %>&page=<%= page - 1 %>" class="page-btn">&#8592; Anterior</a><% } %>
+    <% for(var i=1;i<=totalPages;i++){ %>
+      <% if(i===1||i===totalPages||Math.abs(i-page)<=2){ %>
+      <a href="?q=<%= q %>&filtro=<%= filtro %>&page=<%= i %>" class="page-btn <%= i===page?'active':'' %>"><%= i %></a>
+      <% } else if(Math.abs(i-page)===3){ %>
+      <span style="color:var(--text-muted);padding:0 .3rem">&#8230;</span>
+      <% } %>
+    <% } %>
+    <% if(page < totalPages){ %><a href="?q=<%= q %>&filtro=<%= filtro %>&page=<%= parseInt(page)+1 %>" class="page-btn">Proxima &#8594;</a><% } %>
+  </div>
+  <% } %>
+</section>
+
+<footer>
+  <div class="footer-logo">BRIWAX</div>
+  <div class="footer-mid">Solucoes Inovadoras e Parcerias que Movem o Atacado.<br/>Zhejiang, China &middot; Mercado Atacadista Brasileiro</div>
+  <div class="footer-socials">
+    <a href="https://www.instagram.com/briwax_oficial" target="_blank" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+    <a href="https://www.facebook.com/profile.php?id=61566373353292" target="_blank" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+    <a href="https://www.linkedin.com/company/briwax-oficial/" target="_blank" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+    <a href="https://wa.me/5511962769557" target="_blank" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
+  </div>
+</footer>
+<div class="footer-bottom">&#169; <%= currentYear %> BRIWAX &middot; TODOS OS DIREITOS RESERVADOS &middot; ZHEJIANG, CHINA</div>
+
+<a href="https://wa.me/5511962769557" class="wa-fab" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
+
+<%- marketingBody %>
+<script>
+var hC=document.getElementById('heroCanvas'),hCtx=hC.getContext('2d'),hW,hH;
+function resH(){hW=hC.width=hC.offsetWidth;hH=hC.height=hC.offsetHeight}resH();window.addEventListener('resize',resH);
+var hBeams=[{x:.08,a:-.2,c:'rgba(59,130,246,',s:.003,p:0},{x:.92,a:.2,c:'rgba(35,82,232,',s:.004,p:1.2},{x:.3,a:-.1,c:'rgba(96,165,250,',s:.003,p:2.3},{x:.7,a:.1,c:'rgba(255,255,255,',s:.005,p:.7},{x:.5,a:0,c:'rgba(59,130,246,',s:.003,p:3}],hT=0;
+(function drawH(){hCtx.clearRect(0,0,hW,hH);hT+=.016;hBeams.forEach(function(b){var a=b.a+Math.sin(hT*b.s*60+b.p)*.18;var ox=b.x*hW,oy=hH,len=hH*1.6,ex=ox+Math.sin(a)*len,ey=oy-Math.cos(a)*len,nx=-Math.sin(a),ny=-Math.cos(a);var g=hCtx.createLinearGradient(ox,oy,ex,ey);g.addColorStop(0,b.c+'0)');g.addColorStop(.1,b.c+'.28)');g.addColorStop(.5,b.c+'.1)');g.addColorStop(1,b.c+'0)');hCtx.beginPath();hCtx.moveTo(ox+nx*3,oy+ny*3);hCtx.lineTo(ex+nx*140,ey+ny*140);hCtx.lineTo(ex-nx*140,ey-ny*140);hCtx.lineTo(ox-nx*3,oy-ny*3);hCtx.closePath();hCtx.fillStyle=g;hCtx.fill();});requestAnimationFrame(drawH);})();
+var burger=document.getElementById('burger'),navLinks=document.getElementById('navLinks');
+burger.addEventListener('click',function(){navLinks.classList.toggle('open')});
+navLinks.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){navLinks.classList.remove('open')})});
+var si=document.getElementById('searchInput'),cb=document.getElementById('clearBtn');
+si.addEventListener('input',function(){cb.classList.toggle('visible',si.value.length>0)});
+cb.addEventListener('click',function(){si.value='';cb.classList.remove('visible');si.focus()});
+</script>
+<script src="/js/catalog-filters.js"></script>
+</body>
+</html>
