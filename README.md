@@ -47,7 +47,7 @@ UPLOAD_MAX_SIZE_MB=10
 ### 3. Criar o banco de dados
 
 ```bash
-psql -U postgres -c "CREATE DATABASE briwax;"
+psql -U postgres -c "CREATE DATABASE briwax WITH ENCODING='UTF8' LC_COLLATE='pt_BR.UTF-8' LC_CTYPE='pt_BR.UTF-8';"
 ```
 
 ### 4. Executar o schema
