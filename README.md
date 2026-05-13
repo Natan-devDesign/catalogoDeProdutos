@@ -1,6 +1,6 @@
 # APLICAÇÃO WEB CATÁLOGO DE PRODUTOS COM 
 # DASHBOARD, CRUD, LOGIN, NÍVEIS DE ACESSO ADMIN E EDITOR
-
+Obs: refatorando, mas tudo está funcionando.
 Stacks: **Node.js · Express · PostgreSQL · EJS · MVC**
 
 ---
